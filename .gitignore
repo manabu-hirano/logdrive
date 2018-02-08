@@ -1,0 +1,8 @@
+.DS_store
+*~
+*.swp
+*.tar.gz
+*.tgz
+*.rpm
+*.iso
+
