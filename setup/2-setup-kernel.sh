@@ -1,7 +1,6 @@
 cat << EOF
 ##
-## This script sets up 
-##  - xen with preservation and restoration functions
+## This script installs 
 ##  - kernel supporting blktap2 functions
 ##
 EOF
