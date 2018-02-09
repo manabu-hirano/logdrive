@@ -42,7 +42,7 @@ Execute ./download/download.sh script to obtain the following software.
 
 Confirm the above software are in ./download directory.
 
-### Requisites: installing related software
+### Requisites: installing LogDrive and related software
 
 Execute setup scripts as follows:
 
