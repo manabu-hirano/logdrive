@@ -46,7 +46,7 @@ Confirm the above software are in ./download directory.
 
 Execute setup scripts as follows:
 
-    cd ../logdrive/setup
+    cd ../setup
     bash 0-setup-bridge-utils.sh
     bash 1-setup-xen-logdrive.sh
     bash 2-setup-kernel.sh
