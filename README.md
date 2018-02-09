@@ -33,7 +33,7 @@ Clone Git repository.
 Execute ./download/download.sh script to obtain the following software.
 
     cd logdrive/download
-    sh download.sh
+    bash download.sh
 
 - bridge-utils-1.5-3.fc17.src.rpm
 - xen-4.1.2.tar.gz
@@ -46,14 +46,19 @@ Confirm the above software are in ./download directory.
 Execute setup scripts as follows:
 
     cd ../logdrive/setup
-    sh 0-setup-bridge-utils.sh
-    sh 1-setup-xen-logdrive.sh
-    sh 2-setup-kernel.sh
+    bash 0-setup-bridge-utils.sh
+    bash 1-setup-xen-logdrive.sh
+    bash 2-setup-kernel.sh
 
 After the kernel installation, you need to config your grub
 and reboot your computer. Please see the details in the end
 of the output of the 2-setup-kernel.sh.
 
+After rebooting your machine, execute the following scripts.
+
+    bash 3-setup-network.sh
+    bash 4-setup-benchmark.sh
+    bash 5-setup-hadoop.sh
 
 
 

@@ -4,7 +4,7 @@ cat << EOF
 ##  - Bonnie++ 
 EOF
 
-BONNIE_TGZ=../downloads/bonnie++-1.97.tgz
+BONNIE_TGZ=../download/bonnie++-1.97.tgz
 
 if [ ! -e ${BONIE_TGZ} ]; then
   echo "You need to download ${BONNIE_TGZ} first."
@@ -13,7 +13,7 @@ fi
 
 echo "Copying original Bonnie++ benchmark software to /tmp"
 tar xvzf ${BONNIE_TGZ} -C /tmp
-echo "Overwriting MIN_TIME of bonnie.h with "0.01"
+echo "Overwriting MIN_TIME of bonnie.h with 0.01"
 cp ./bonnie/bonnie.h /tmp/bonnie++-1.97.1/
 ## Save current directory to OLDPWD
 pwd
@@ -26,7 +26,7 @@ make install
 popd
 
 cat << EOF
-bonnie.tar was created in /tmp/
+## bonnie.tar was created in /tmp/
 EOF
 
 echo "--- Finished $0"
