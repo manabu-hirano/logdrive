@@ -35,6 +35,7 @@ Execute ./download/download.sh script to obtain the following software.
     cd logdrive/download
     bash download.sh
 
+- hadoop-2.9.0.tar.gz
 - bridge-utils-1.5-3.fc17.src.rpm
 - xen-4.1.2.tar.gz
 - CentOS-5.11-i386-bin-DVD-1of2.iso (Guest OS)
