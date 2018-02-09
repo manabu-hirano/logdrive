@@ -4,7 +4,7 @@ LogDrive is surveillance and forensic analysis tools for Xen-based IaaS cloud en
 
 ## Getting Started
 
-### Prerequisites: operating system and kernels
+### Prerequisites: operating system 
 
 Download CentOS-6.9-x86_64-bin-DVD1.iso from https://www.centos.org and boot your computer using the burnt disc. Install CentOS 6.9 on your computer with the following options.
 
@@ -23,7 +23,7 @@ After the installation, disable firewall, selinux, and Network Manager services.
     service NetworkManager stop
     chkconfig NetworkManager off
 
-### Rrequisites: related software
+### Rrequisites: downloading related software
 
 Clone Git repository.
 
@@ -42,7 +42,7 @@ Execute ./download/download.sh script to obtain the following software.
 
 Confirm the above software are in ./download directory.
 
-### Requisites: setup environments
+### Requisites: installing related software
 
 Execute setup scripts as follows:
 
@@ -61,5 +61,49 @@ After rebooting your machine, execute the following scripts.
     bash 4-setup-benchmark.sh
     bash 5-setup-hadoop.sh
 
+## Running the tests
 
+### Preservation
+
+### Restoration
+
+### Indexing
+
+### Search
+
+
+
+## Authors
+
+- Manabu Hirano - project manager
+- Contributors: Hiromu Ogawa, Koki Yoshida, Natsuki Tsuzuki, Seishiro Ikeda
+
+## License
+
+This project is licensed under the BSD License
+
+    Copyright (c) 2018, Manabu Hirano
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the author nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+    
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
