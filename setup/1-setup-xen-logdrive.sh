@@ -1,10 +1,8 @@
 cat << EOF
 ##
-## This script sets up 
-##  - Installing Xen source codes
-##  - Patch files for preservation and restoration functions
-##  - Making Xen with patched files
-##  - Installing Xen hypervisor and modules
+## This script 
+##  - installs Xen
+##  - installs LogDrive preservation and restoration functions
 ##
 EOF
 
@@ -41,9 +39,9 @@ fi
 
 
 echo "---"
-if [ ! -e ../downloads/xen-4.1.2.tar.gz ]; then
-  echo "Error: could not find ../downloads/xen-4.1.2.tar.gz"
-  echo "Error: please executes ../downloads/downlods.sh first"
+if [ ! -e ../download/xen-4.1.2.tar.gz ]; then
+  echo "Error: could not find ../download/xen-4.1.2.tar.gz"
+  echo "Error: please executes ../download/downlods.sh first"
   exit 1
 fi
 
@@ -67,7 +65,7 @@ case $yn in
 esac
 
 echo "--- Extracting xen-4.1.2.tar.gz onto ${XEN_ROOT}/"
-tar xvzf ../downloads/xen-4.1.2.tar.gz -C ${XEN_ROOT}
+tar xvzf ../download/xen-4.1.2.tar.gz -C ${XEN_ROOT}
 
 echo "--- Copying modified and newly appended files for prsv-sys on original Xen 4.1.2"
 cd xen-with-blktap

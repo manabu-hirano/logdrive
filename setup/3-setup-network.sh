@@ -1,7 +1,7 @@
 cat << EOF
 ##
 ## This script sets up
-##  - service of xencommons
+##  - xencommons service
 ##  - ifcfg-eth0 and ifcfg-xenbr0
 ##
 EOF
@@ -9,7 +9,7 @@ EOF
 ## EDIT HERE IF YOUR NIC IS NOT eth0
 NET_IF=eth0
 
-echo "--- This script update network config file for ${NET_IF}"
+echo "--- This script update network config for ${NET_IF}"
 echo "--- Is your network interface ${NET_IF}?"
 read -p "y or n) " yn
 case $yn in

@@ -49,10 +49,10 @@ title Xen (4.1.2) with CentOS (2.6.32.57)
 * please note that you should specify one kernel and two module options here
 * we recommend longer timeout value such as 30s.
 
-(2) edit /etc/fstab
+(2) add the following line at the tail of /etc/fstab
 xenfs                   /proc/xen               xenfs   defaults        0 0
 
-(3) reboot the system
+(3) reboot your system
 
 EOF
 
