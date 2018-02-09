@@ -13,15 +13,15 @@ echo Are you sure you want to install java?
 read -p "y or n) " yn
 case $yn in
     [Yy]* )
-	yum install java-1.8.0-openjdk
-    	yum install java-1.8.0-openjdk-devel 
+	yum install -y java-1.8.0-openjdk
+    	yum install -y java-1.8.0-openjdk-devel 
 esac
 
 echo Are you sure you want to install ${HADOOP_TGZ}?
 read -p "y or n) " yn
 case $yn in
     [Yy]* ) 
-	tar xvzf ../downloads/${HADOOP_TGZ} -C /usr/local/
+	tar xvzf ../download/${HADOOP_TGZ} -C /usr/local/
 esac 
 
 echo "Automatically update ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh"
