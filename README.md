@@ -43,6 +43,17 @@ Confirm the above software are in ./download directory.
 
 ### Requisites: setup environments
 
+Execute setup scripts as follows:
+
     cd ../logdrive/setup
     sh 0-setup-bridge-utils.sh
+    sh 1-setup-xen-logdrive.sh
+    sh 2-setup-kernel.sh
+
+After the kernel installation, you need to config your grub
+and reboot your computer. Please see the details in the end
+of the output of the 2-setup-kernel.sh.
+
+
+
 
