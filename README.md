@@ -25,7 +25,15 @@ After the installation, disable firewall, selinux, and Network Manager services.
 
 ### Rrequisites: related software
 
+Clone Git repository.
+
+    unset SSH_ASKPASS
+    git clone https://github.com/manabu-hirano/logdrive.git
+
 Execute ./download/download.sh script to obtain the following software.
+
+    cd logdrive/download
+    sh download.sh
 
 - bridge-utils-1.5-3.fc17.src.rpm
 - xen-4.1.2.tar.gz
@@ -35,4 +43,6 @@ Confirm the above software are in ./download directory.
 
 ### Requisites: setup environments
 
+    cd ../logdrive/setup
+    sh 0-setup-bridge-utils.sh
 

@@ -3,12 +3,12 @@ cat << EOF
 ## This script
 ##  - installs required packages 
 ##  - installs bridge-utils that supports blktap2
-##  * we do not recoomend to run "yum update" because of dependency problems
+##  * we do not recoomend to run "yum update" here because of dependency problems
 EOF
 
 TMP_ROOT=/tmp
 BRIDGE_UTILS=bridge-utils-1.5-3.fc17
-BRIDGE_UTILS_RPM=../downloads/${BRIDGE_UTILS}.src.rpm
+BRIDGE_UTILS_RPM=../download/${BRIDGE_UTILS}.src.rpm
 
 echo "--- Installing required packages"
 yum install -y yum-utils libsysfs-devel libidn-devel zlib-devel libcurl-devel libX11-devel gtk2-devel python-devel ncurses-devel libaio-devel pciutils-devel libuuid-devel udev dev86 gettext gnutls-devel openssl-devel flex bison wget git iproute python zlib openssl SDL-devel transfig texi2html ghostscript tetex-latex perl iasl glibc-devel.i686 glibc-devel.x86_64 mercurial ruby httpd rpm-build gcc texinfo gcc-c++
