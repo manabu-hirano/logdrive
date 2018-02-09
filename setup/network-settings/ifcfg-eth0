@@ -1,0 +1,5 @@
+DEVICE=eth0
+TYPE=Ethernet
+ONBOOT=yes
+BRIDGE="xenbr0"
+
