@@ -9,36 +9,6 @@ EOF
 XEN_ROOT=/usr/src
 XEN_VERSION=4.1.2
 
-if [ -e ${XEN_ROOT}/xen-${XEN_VERSION}  ]; then
-	echo "Current setting of O_DIRECT in ${XEN_ROOT}:"
-	grep "#define O_DIRECT_FOR_AIO" ${XEN_ROOT}/xen-4.1.2/tools/blktap2/drivers/block-aio.c
-	grep "#define O_DIRECT_FOR_PRSV" ${XEN_ROOT}/xen-4.1.2/tools/blktap2/drivers/preservation.c
-fi
-echo "Please change O_DIRECT_FOR_ flags in the following src if you want to switch O_DIRECT options"
-echo xen-with-blktap/src/tools/blktap2/drivers/preservation.c 
-echo xen-with-blktap/src/tools/blktap2/drivers/block-aio.c
-echo "---"
-grep "define O_DIRECT_FOR" xen-with-blktap/src/tools/blktap2/drivers/preservation.c 
-grep "define O_DIRECT_FOR" xen-with-blktap/src/tools/blktap2/drivers/block-aio.c 
-echo "---"
-
-if [ -e ${XEN_ROOT}/xen-${XEN_VERSION}  ]; then
-        echo "---"
-        echo "Current setting of DEFAULT_BLOCK_SIZE in ${XEN_ROOT}"
-        grep "#define DEFAULT_BLOCK_SIZE" ${XEN_ROOT}/xen-4.1.2/tools/blktap2/drivers/utils.h
-fi
-
-echo "Please change DEFAULT_BLOCK_SIZE in the following src"
-echo xen-with-blktap/src/tools/blktap2/drivers/util.h
-
-if [ -e ${XEN_ROOT}/xen-${XEN_VERSION}  ]; then
-        echo "---"
-        echo "Current setting of DEFAULT_BLOCK_SIZE in ${XEN_ROOT}"
-        grep "#define DEFAULT_BLOCK_SIZE" ${XEN_ROOT}/xen-4.1.2/tools/blktap2/drivers/utils.h
-fi
-
-
-echo "---"
 if [ ! -e ../download/xen-4.1.2.tar.gz ]; then
   echo "Error: could not find ../download/xen-4.1.2.tar.gz"
   echo "Error: please executes ../download/downlods.sh first"

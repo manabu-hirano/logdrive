@@ -38,6 +38,7 @@ cat ${BASH_PROFILE_ORIG} | sed -e "s#<HADOOP_INSTALL>#${HADOOP_INSTALL}#g" > ~/.
 
     echo "Your updated .bash_profile is:"
     cat ~/.bash_profile
+    source ~/.bash_profile
 
 esac
 

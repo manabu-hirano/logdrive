@@ -28,8 +28,6 @@ esac
 
 sed -e "s|NET_IF|${NET_IF}|g" ./network-settings/ifcfg-NET_IF > /tmp/ifcfg-${NET_IF}
 
-exit
-
 ETH0_CFG_SRC=/tmp/ifcfg-${NET_IF}
 XENBR0_CFG_SRC=./network-settings/ifcfg-xenbr0
 NETWORK_CFG_DST=/etc/sysconfig/network-scripts
