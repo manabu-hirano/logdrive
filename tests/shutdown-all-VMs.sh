@@ -57,7 +57,7 @@ do
                 echo Completed benchmark on ${TAP_TYPE}${DISK_TYPE}-vm-${j}
 		completed[${j}]="1"
                 REMAIN_VMS=`echo ${REMAIN_VMS}-1 | bc`
-		sh ../tapdisk-tools/umount.sh /benchmark/${DISK_TYPE}-vm-${j}.img
+		sh ./umount.sh /benchmark/${DISK_TYPE}-vm-${j}.img
            fi
         fi
    done

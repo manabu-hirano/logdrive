@@ -15,8 +15,8 @@ network --device=eth0 --bootproto=dhcp --hostname=BLKTAP2_TYPE-vm-VM_NUMBER
 
 firewall --disabled
 
-# openssl passwd -1 で生成したパスワードを貼り付け
-# ここでは root パスワードを test で作成
+# use encrypted password by "openssl passwd -1"
+# The following example is "test" for root password
 rootpw --iscrypted $1$r0blWBLl$LVdXSmqYvu7hpYEZzc0nl/
 
 # disk partition for 10 GiB disk

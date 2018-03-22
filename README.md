@@ -66,44 +66,72 @@ After rebooting your machine, execute the following scripts.
 
 First, you need to specify IP address of your computer as follows:
 
-   cd tests
-   vi ipaddr_definition.sh
-   HOST_IP=192.168.1.130  # YOUR COMPUTER'S IP ADDRESS
-   GUEST_IP_SUFFIX_BASE=150  # SUFFIX OF GUEST OS'S IP ADDRESS
+    cd tests
+    vi ipaddr_definition.sh
+    HOST_IP=192.168.1.130  # YOUR COMPUTER'S IP ADDRESS
+    GUEST_IP_SUFFIX_BASE=150  # SUFFIX OF GUEST OS'S IP ADDRESS
 
-In our script, host's IP address is ${HOST_IP}, and guest OS's IP addresses are 192.168.1.{151, 152, 153, ...} if you use the above setting.
+In our script, host's IP address is ${HOST_IP}, and guest OS's IP addresses are 192.168.1.{151, 152, 153, ...}/24 when you use the above setting.
 
-   cd tests
-   bash make-VMs.sh
-   ## This scripts makes VMs by answering questions
-   ##
-   Please specify the disk type you want to use:
-   1) BLKTAP2 aio
-   2) BLKTAP2 preservation
-   3) NON-BLKTAP2, file
-   1-3) [ ENTER 2 ]
-   Disk type is set to preservation
-   Please specify the number of VMs you want to create:
-   1-36) [ ENTER 1 FOR    
-   The number of VMs is set to 1
-   Please specify the installation directory of VMs:
-   /benchmark) [ ENTER ]
-   The installation directory of VMs is set to /benchmark
-   Are you sure to proceed to install VMs?
-   y or n) [ ENTER y ]
+    cd tests
+    bash make-VMs.sh
+    ## This scripts makes VMs by answering questions
+    ##
+    Please specify the disk type you want to use:
+    1) BLKTAP2 aio
+    2) BLKTAP2 preservation
+    3) NON-BLKTAP2, file
+    1-3) [ ENTER 2 ]
+    Disk type is set to preservation
+    Please specify the number of VMs you want to create:
+    1-36) [ ENTER 1 (YOU CAN SPECIFY UP TO 36 VMs) ]   
+    The number of VMs is set to 1
+    Please specify the installation directory of VMs:
+    /benchmark) [ ENTER ]
+    The installation directory of VMs is set to /benchmark
+    Are you sure to proceed to install VMs?
+    y or n) [ ENTER y ]
 
-while the script is installing OSes on VMs, you can check the progress as follows:
+while the script is installing OS on VM, you can check the progress as follows:
 
-  # To list virtual machines
-  xl list
-  # To switch console of a virtual machine
-  xl console tap:preservation-vm-1
-  # To show the output of make-VMs.sh (change the last number to specify a VM)
-  tail -f /tmp/preservation-vm-1.log
+   # To list virtual machines
+   xl list
+   # To switch console of a virtual machine
+   xl console tap:preservation-vm-1
+   # To show the output of make-VMs.sh (change the last number to specify a VM)
+   tail -f /tmp/preservation-vm-1.log
 
-## Running the tests
+The LogDrive database of the installed virtual machine is /benchmark/preservation-vm-1.img.
+
+## Installing benchmark software on VMs
+
+If you need to execute benchmark software on VMs, use the following instructions.
+   rpm -ivh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+   yum -y install sshpass
+   
+   bash auto-setup-VMs.sh 2 1
+     ## 2 for preservation, 1 for the number of VMs to be setup
+
+## Running the benchmark software on VMs
+
+First, you need to add a user "download" with password "test" as follows to gather the results of benchmark software on multiple VMs.
+
+    useradd download
+    passwd download 
+     Changing password for user download.
+     New password: [ ENTER "test" ]
+     BAD PASSWORD: it is too short
+     BAD PASSWORD: is too simple
+     Retype new password: [ ENTER "test" ]
+
+     # Copy original logdrive file
+     cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig       bash auto-runtest-VMs.sh
+
+You can check the results of benchmark software on VMs as CSV files in /benchmark/results/. If you need to execute further benchmark, see the detail of the auto-runtest-VMs.sh.
 
 ### Preservation
+
+Typical steps to start and to shutdown virtual machines with LogDrive support as follows.
 
 ### Restoration
 

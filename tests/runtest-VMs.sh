@@ -1,10 +1,11 @@
 cat << EOF
-## This script setup benchmark software on each VM.
-## setup-VMs.sh [type] [num of vms]
+## This script runs benchmark on each VM by answering questions
+## you do not need to supply parameters like the following,
+##  but you can utilize these parameters from automatic test scripts
+## runtest-VMs.sh [type] [num of vms]
+##
 ##
 EOF
-
-source ./ipaddr_definition.sh
 
 if [ $# == 2 ]; then
 	type=$1;
@@ -14,8 +15,15 @@ else
 	number=""
 fi
 
-#WAIT_MIN=120
-WAIT_MIN=60
+source ./ipaddr_definition.sh
+
+CSV_DIR=/benchmark/csv_dir
+## 
+USER_TO_DOWNLOAD_CSV=download
+PW_TO_DOWNLOAD_CSV=test
+IP_TO_DOWNLOAD_CSV=${HOST_IP}
+
+WAIT_MIN=120
 
 echo "Please specify the disk type you want to use:"
 echo " 1) BLKTAP2 aio"
@@ -69,16 +77,23 @@ do
  echo -n ${i} " "
 done
 
+echo ""
+echo Removing CSV directory for storing results
+rm -rf ${CSV_DIR}
+mkdir ${CSV_DIR}
+chown ${USER_TO_DOWNLOAD_CSV} ${CSV_DIR}
+
 echo Removing ssh know_hosts file for automatic login...
 rm -f /root/.ssh/known_hosts
 
 for i in `seq 1 ${NUMBER_OF_VMS}`
 do
    VM_IPADDR=`echo 150+${i} | bc`
-   sshpass -p 'test' ssh -o StrictHostKeyChecking=no root@192.168.1.${VM_IPADDR}  "yes | rm install-bench.sh; wget http://${HOST_IP}/install-bench.sh; sh install-bench.sh; shutdown -h now"
+   sshpass -p 'test' ssh -o StrictHostKeyChecking=no root@192.168.1.${VM_IPADDR}  "echo 3 > /proc/sys/vm/drop_caches; mkdir /tmp/test; rm /tmp/${DISK_TYPE}-vm-${VM_IPADDR}.csv; rm -f /root/.ssh/known_hosts"
+   sshpass -p 'test' ssh -o StrictHostKeyChecking=no root@192.168.1.${VM_IPADDR}  "bonnie++ -d /tmp/test -u root -q > /tmp/${DISK_TYPE}-vm-${VM_IPADDR}.csv; sshpass -p ${PW_TO_DOWNLOAD_CSV} scp -o StrictHostKeyChecking=no /tmp/${DISK_TYPE}-vm-${VM_IPADDR}.csv ${USER_TO_DOWNLOAD_CSV}@${IP_TO_DOWNLOAD_CSV}:${CSV_DIR}; shutdown -h now" &
 done
 
-echo "Running setup on guest VMs..."
+echo "Running benchmark on guest VMs..."
 REMAIN_VMS=${NUMBER_OF_VMS}
 
 for j in `seq 1 ${NUMBER_OF_VMS}`
@@ -100,7 +115,7 @@ do
                 echo Completed benchmark on ${TAP_TYPE}${DISK_TYPE}-vm-${j}
 		completed[${j}]="1"
                 REMAIN_VMS=`echo ${REMAIN_VMS}-1 | bc`
-		sh ./umount.sh /benchmark/${DISK_TYPE}-vm-${j}.img
+		sh ../tapdisk-tools/umount.sh /benchmark/${DISK_TYPE}-vm-${j}.img
            fi
         fi
    done

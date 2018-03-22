@@ -9,9 +9,9 @@ echo " 2) BLKTAP2 preservation"
 echo " 3) NON-BLKTAP2, file"
 read -p "1-3) " type
 case $type in
-    [1]* ) DISK_TYPE=aio; break;;
-    [2]* ) DISK_TYPE=preservation; break;;
-    [3]* ) DISK_TYPE=file; break;;
+    [1]* ) DISK_TYPE=aio; ;;
+    [2]* ) DISK_TYPE=preservation; ;;
+    [3]* ) DISK_TYPE=file; ;;
     * ) echo "Please answer between 1-3"; exit;;
 esac 
 echo Disk type is set to ${DISK_TYPE}
@@ -32,15 +32,19 @@ if [ -z ${INSTALL_DIR} ]; then
 	INSTALL_DIR=/benchmark
 fi
 
-mkdir ${INSTALL_DIR}
-mkdir /var/www/html/centos
+if [ ! -e ${INSTALL_DIR} ]; then
+  mkdir ${INSTALL_DIR}
+fi
+if [ ! -e /var/www/html/centos ]; then
+  mkdir /var/www/html/centos
+fi
 
 echo The installation directory of VMs is set to ${INSTALL_DIR}
 
 echo "Are you sure to proceed to install VMs?"
 read -p "y or n) " yn
 case $yn in
-    [Yy]* ) break;;
+    [Yy]* ) ;;
     [Nn]* ) echo "Canceled."; exit;;
     * ) echo "Please answer y(es) or n(o)."; exit;;
 esac
@@ -84,42 +88,18 @@ done
 echo "Finishing installing ${DISK_TYPE}-vm-[1-${NUMBER_OF_VMS}]"
 
 cat << EOF
-================
-Setup benchmark
-================
-At first, you need to:
 
-cp test-suites/bonnie.tar /var/www/html/
-cp test-suites/install-bench.sh /var/www/html/
-
-For each VMs, you need to execute the following command.
+To test the installed virtual machine:
 
 xl create /benchmark/*-vm-*.postinstall.xl.cfg
-login as root/test
+xl list
+  check the name of virtualmachine, and switch the console as follows
+xl console tap:preservation-vm-1
 
-yes | rm install-bench.sh; wget http://192.168.1.210/install-bench.sh; sh install-bench.sh
-
-then the scripts installs bonnie++ and shutdown the vm automatically.
-
-=====================
-GUI login
-=====================
-
-Start virtual machine
-xl create /benchmark/*-vm-*.postinstall.xl.cfg
-
-Login as root with password "test"
-
-Start vncserver and configure your password for vnc
-vncserver
-
-Once you start vncserver, .vnc/xstartup is created.
-You need to replace "twm &" with "exec gnome-session &"
-
-Then, restart your system and start vncserver again.
-
-Outside the virtual machine, you can use vncviewer to access the vnc.
-vncserver IPaddress:5901
+You can login as root with password "test".
+If you could login the guest OS, 
+you need to shutdown the guest OS at last
+for the following tests.
 
 EOF
 
