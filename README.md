@@ -106,6 +106,7 @@ The LogDrive database of the installed virtual machine is /benchmark/preservatio
 ## Installing benchmark software on VMs
 
 If you need to execute benchmark software on VMs, use the following instructions.
+
     rpm -ivh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
     yum -y install sshpass
     
