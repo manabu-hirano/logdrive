@@ -1,0 +1,12 @@
+name = "BLKTAP2_TYPE-vm-VM_NUMBER"
+kernel = "/var/www/html/centos/images/xen/vmlinuz"
+ramdisk = "/var/www/html/centos/images/xen/initrd.img"
+extra = "text ks=KS_URL"
+memory = 2048
+disk = [ "BLKTAP2_TYPE:INSTALL_IMG,xvda,w" ]
+vif = [ "bridge=xenbr0" ]
+vcpus = 1
+on_reboot = "destroy"
+on_crash = "destroy"
+on_poweroff = "destroy"
+

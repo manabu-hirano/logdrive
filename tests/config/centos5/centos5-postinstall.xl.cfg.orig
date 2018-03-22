@@ -1,0 +1,20 @@
+name = "BLKTAP2_TYPE-vm-VM_NUMBER"
+##
+## aio and file can be booted by pygrub
+## however, preservation image is not supported by pygrub,
+## so you can boot preservation image by specfying kernel and initrd
+## (They are copied to local disk when post scripts in kickstart file.
+##
+##bootloader = "/usr/bin/pygrub"
+##
+kernel="/benchmark/vmlinuz-2.6.18-398.el5xen"
+ramdisk="/benchmark/initrd-2.6.18-398.el5xen.img"
+##
+memory = 2048
+disk = [ "BLKTAP2_TYPE:INSTALL_IMG,xvda,w" ]
+vif = [ "bridge=xenbr0" ]
+vcpus = 1
+on_reboot = "destroy"
+on_crash = "destroy"
+on_poweroff = "destroy"
+

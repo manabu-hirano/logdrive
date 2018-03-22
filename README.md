@@ -62,6 +62,45 @@ After rebooting your machine, execute the following scripts.
     bash 4-setup-benchmark.sh
     bash 5-setup-hadoop.sh
 
+## Installing guest OS for tests
+
+First, you need to specify IP address of your computer as follows:
+
+   cd tests
+   vi ipaddr_definition.sh
+   HOST_IP=192.168.1.130  # YOUR COMPUTER'S IP ADDRESS
+   GUEST_IP_SUFFIX_BASE=150  # SUFFIX OF GUEST OS'S IP ADDRESS
+
+In our script, host's IP address is ${HOST_IP}, and guest OS's IP addresses are 192.168.1.{151, 152, 153, ...} if you use the above setting.
+
+   cd tests
+   bash make-VMs.sh
+   ## This scripts makes VMs by answering questions
+   ##
+   Please specify the disk type you want to use:
+   1) BLKTAP2 aio
+   2) BLKTAP2 preservation
+   3) NON-BLKTAP2, file
+   1-3) [ ENTER 2 ]
+   Disk type is set to preservation
+   Please specify the number of VMs you want to create:
+   1-36) [ ENTER 1 FOR    
+   The number of VMs is set to 1
+   Please specify the installation directory of VMs:
+   /benchmark) [ ENTER ]
+   The installation directory of VMs is set to /benchmark
+   Are you sure to proceed to install VMs?
+   y or n) [ ENTER y ]
+
+while the script is installing OSes on VMs, you can check the progress as follows:
+
+  # To list virtual machines
+  xl list
+  # To switch console of a virtual machine
+  xl console tap:preservation-vm-1
+  # To show the output of make-VMs.sh (change the last number to specify a VM)
+  tail -f /tmp/preservation-vm-1.log
+
 ## Running the tests
 
 ### Preservation
