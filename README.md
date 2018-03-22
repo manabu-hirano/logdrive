@@ -126,7 +126,8 @@ First, you need to add a user "download" with password "test" as follows to gath
      Retype new password: [ ENTER "test" ]
 
      # Copy original logdrive file
-     cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig       bash auto-runtest-VMs.sh
+     cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig
+     bash auto-runtest-VMs.sh
 
 You can check the results of benchmark software on VMs as CSV files in /benchmark/results/. If you need to execute further benchmark, see the detail of the auto-runtest-VMs.sh.
 
