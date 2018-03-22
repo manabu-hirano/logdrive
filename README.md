@@ -23,7 +23,8 @@ After the installation, disable firewall, selinux, and Network Manager services.
     service NetworkManager stop
     chkconfig NetworkManager off
 
-### Rrequisites: downloading related software
+### Prerequisites: downloading related software
+
 
 Clone Git repository.
 
@@ -42,7 +43,7 @@ Execute ./download/download.sh script to obtain the following software.
 
 Confirm the above software are in ./download directory.
 
-### Requisites: installing LogDrive and related software
+### Prerequisites: installing LogDrive and related software
 
 Execute setup scripts as follows:
 
