@@ -94,22 +94,22 @@ In our script, host's IP address is ${HOST_IP}, and guest OS's IP addresses are 
 
 while the script is installing OS on VM, you can check the progress as follows:
 
-   # To list virtual machines
-   xl list
-   # To switch console of a virtual machine
-   xl console tap:preservation-vm-1
-   # To show the output of make-VMs.sh (change the last number to specify a VM)
-   tail -f /tmp/preservation-vm-1.log
+    # To list virtual machines
+    xl list
+    # To switch console of a virtual machine
+    xl console tap:preservation-vm-1
+    # To show the output of make-VMs.sh (change the last number to specify a VM)
+    tail -f /tmp/preservation-vm-1.log
 
 The LogDrive database of the installed virtual machine is /benchmark/preservation-vm-1.img.
 
 ## Installing benchmark software on VMs
 
 If you need to execute benchmark software on VMs, use the following instructions.
-   rpm -ivh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-   yum -y install sshpass
-   
-   bash auto-setup-VMs.sh 2 1
+    rpm -ivh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    yum -y install sshpass
+    
+    bash auto-setup-VMs.sh 2 1
      ## 2 for preservation, 1 for the number of VMs to be setup
 
 ## Running the benchmark software on VMs
