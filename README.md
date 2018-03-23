@@ -4,9 +4,13 @@ LogDrive is surveillance and forensic analysis tools for Xen-based IaaS cloud en
 
 ## Getting Started
 
+### Requirement
+
+You need a temporary PC to test this software and tutorial. The LogDrive framework uses custom Linux kernel so that we cannot use Docker unfortunately. We tested this tutorial on a PC with 8 GB RAM and 128 GB SSD. Please note that we did not test this tutorial on a virtual machine instance such as an EC2 instance yet (i.e., a virtual machine runs on a virtual machine).
+
 ### Prerequisites: operating system 
 
-Download CentOS-6.9-x86_64-bin-DVD1.iso from https://www.centos.org and boot your computer using the burnt disc. Install CentOS 6.9 on your computer with the following options.
+Download CentOS-6.9-x86_64-bin-DVD1.iso from https://www.centos.org and boot your computer using the burnt disc. Install CentOS 6.9 on your temporary computer with the following options. 
 
 - Basic Storage Devices
 - Minimal Desktop
@@ -22,19 +26,21 @@ After the installation, disable firewall, selinux, and Network Manager services.
       SELINUX=disabled
     service NetworkManager stop
     chkconfig NetworkManager off
+    yum -y remove NetworkManager
+
+Before the next step, reboot your computer.
 
 ### Prerequisites: downloading related software
 
+Clone Git repository. If you cannot use network, try "ifup eth0" (change the argument if your NIC is not eth0).
 
-Clone Git repository.
-
-    unset SSH_ASKPASS
-    git clone https://github.com/manabu-hirano/logdrive.git
+    [root@localhost ~]# unset SSH_ASKPASS
+    [root@localhost ~]# git clone https://github.com/manabu-hirano/logdrive.git
 
 Execute ./download/download.sh script to obtain the following software.
 
-    cd logdrive/download
-    bash download.sh
+    [root@localhost ~]# cd logdrive/download
+    [root@localhost download]# bash download.sh
 
 - hadoop-2.9.0.tar.gz
 - bridge-utils-1.5-3.fc17.src.rpm
@@ -47,20 +53,45 @@ Confirm the above software are in ./download directory.
 
 Execute setup scripts as follows:
 
-    cd ../setup
-    bash 0-setup-bridge-utils.sh
-    bash 1-setup-xen-logdrive.sh
-    bash 2-setup-kernel.sh
+    [root@localhost logdrive]# cd ../setup
+    [root@localhost setup]# bash 0-setup-bridge-utils.sh
+    
+    [root@localhost setup]# bash 1-setup-xen-logdrive.sh
+    ##
+    ## This script 
+    ##  - installs Xen
+    ##  - installs LogDrive preservation and restoration functions
+    ##
+    Are you sure you want to install Xen with prsv-sys (blktap2 driver)? 
+    ...
+    y or n) [ ENTER "y" ] 
+    ... 
+    [root@localhost setup]# bash 2-setup-kernel.sh
+    ...
+      [ THIS SCRIPT WILL TAKE LONGER THAN THE PREVIOUS SCRIPT ]
 
-After the kernel installation, you need to config your grub
-and reboot your computer. Please see the details in the end
-of the output of the 2-setup-kernel.sh.
+After the kernel installation, you need to edit your grub configuration file and /etc/fstab, and reboot your computer. Please see the details in the end of the output of the 2-setup-kernel.sh.
+
+    [root@localhost setup]# vi /etc/grub.conf
+       [ INSERT THE FOLLOWING NEW ENTRY ]
+       #hiddenmenu
+       title Xen (4.1.2) with CentOS (2.6.32.57)
+        root (hd0,0)
+        kernel /xen-4.1.2.gz
+        module /vmlinuz-2.6.32.57 ro root=/dev/mapper/VolGroup-lv_root rd_NO_LUKS LANG=en_US.UTF-8 rd_NO_MD rd_LVM_LV=VolGroup/lv_swap SYSFONT=latarcyrheb-sun16 rhgb crashkernel=auto  KEYBOARDTYPE=pc KEYTABLE=jp106 rd_LVM_LV=VolGroup/lv_root quiet rd_NO_DM
+        module /initramfs-2.6.32.57.img
+    
+    [root@localhost setup]# vi /etc/fstab
+       [ ADD THE FOLLOWING LINE ]
+    xenfs                   /proc/xen               xenfs   defaults        0 0
+    
+    [root@localhost setup]# reboot
 
 After rebooting your machine, execute the following scripts.
 
-    bash 3-setup-network.sh
-    bash 4-setup-benchmark.sh
-    bash 5-setup-hadoop.sh
+    [root@localhost setup]# bash 3-setup-network.sh
+    [root@localhost setup]# bash 4-setup-benchmark.sh
+    [root@localhost setup]# bash 5-setup-hadoop.sh
 
 ## Installing guest OS for tests
 
