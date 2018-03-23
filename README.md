@@ -282,7 +282,7 @@ Let's check the difference between the two restored disks.
     THIS IS THE TEST
     [root@localhost ]# 
 
-At least, you will found the differences in .bash_history and in the newly created file "test.txt".
+You will find the differences in .bash_history and in the newly created file "test.txt" at least.
 
 Finally, unmount the restored devices and to remove the LogDrive instance as follows. This step cannot be skipped.
 
