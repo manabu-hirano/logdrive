@@ -421,7 +421,7 @@ Each line consists of UNIX time in second, UNIX time in nanosecond, LBA, size of
 
 ### Search with sampling 
 
-Next, reduce search time by using sampling technique. The following example creates a sampled HashDB with sampling rate of 0.5%.
+This section describes how to reduce search time by using sampling technique. The following example creates a sampled HashDB with sampling rate of 0.5%.
 
     [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5-0.05
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.samplingIndex /preservation-vm-1.md5 /preservation-vm-1.md5-0.05 0.05
