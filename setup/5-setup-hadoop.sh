@@ -28,6 +28,9 @@ echo "Automatically update ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh"
 sed -i.bak -e 's|${JAVA_HOME}|/usr/lib/jvm/java|g' ${HADOOP_INSTALL}/etc/hadoop/hadoop-env.sh
 echo "Other parameters in hadoop-env.sh such as heap should be configured for your computer."
 
+echo "Updating core-site.xml..."
+yes  | cp ./hadoop-config/core-site.xml ${HADOOP_INSTALL}/etc/hadoop/
+
 echo "Are you sure you want to update your ~/.bash_profile?"
 read -p "y or n) " yn
 case $yn in

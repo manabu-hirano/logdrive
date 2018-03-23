@@ -125,9 +125,9 @@ First, you need to add a user "download" with password "test" as follows to gath
      BAD PASSWORD: is too simple
      Retype new password: [ ENTER "test" ]
 
-     # Copy original logdrive file
-     cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig
-     bash auto-runtest-VMs.sh
+    # Copy original logdrive file
+    cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig
+    bash auto-runtest-VMs.sh
 
 You can check the results of benchmark software on VMs as CSV files in /benchmark/results/. If you need to execute further benchmark, see the detail of the auto-runtest-VMs.sh.
 
@@ -244,6 +244,37 @@ Finally, we have to unmount the restored devices and to remove the LogDrive inst
        [ CONFIRM THERE IS NO MOUNT POINTS RELATED TO LOGDRIVE HERE ]
 
 ### Indexing
+
+In the indexing and searching phase, we use Hadoop framework. We format HDFS first.
+
+    [root@localhost setup]# hdfs namenode -format
+    ....
+    /************************************************************
+    SHUTDOWN_MSG: Shutting down NameNode at localhost/127.0.0.1
+    ************************************************************/
+
+After formating the HDFS, start dfs and yarn services.
+
+    [root@localhost setup]# /usr/local/hadoop-2.9.0/sbin/start-all.sh 
+    This script is Deprecated. Instead use start-dfs.sh and start-yarn.sh
+    18/03/23 21:56:39 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+    Starting namenodes on [localhost]
+    root@localhost's password: 
+    localhost: starting namenode, logging to /usr/local/hadoop-2.9.0/logs/hadoop-root-namenode-localhost.localdomain.out
+    root@localhost's password: 
+    localhost: starting datanode, logging to /usr/local/hadoop-2.9.0/logs/hadoop-root-datanode-localhost.localdomain.out
+    Starting secondary namenodes [0.0.0.0]
+    root@0.0.0.0's password: 
+    0.0.0.0: starting secondarynamenode, logging to /usr/local/hadoop-2.9.0/logs/hadoop-root-secondarynamenode-localhost.localdomain.out
+    18/03/23 21:57:06 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+    starting yarn daemons
+    starting resourcemanager, logging to /usr/local/hadoop-2.9.0/logs/yarn-root-resourcemanager-localhost.localdomain.out
+    root@localhost's password: 
+    localhost: starting nodemanager, logging to /usr/local/hadoop-2.9.0/logs/yarn-root-nodemanager-localhost.localdomain.out
+
+Check the status of your HDFS via http://localhost:50070/. If you cannot see the management screen, check /usr/local/hadoop-2.9.0/logs/*.log.
+
+
 
 ### Search
 
