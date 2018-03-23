@@ -403,28 +403,27 @@ First, delete /results directory in HDFS. Then, execute sector-hash based file d
 Check the result of sector-hash based file deteciton.
 
     [root@localhost tests]# hadoop fs -text /results/part-r-00000
-    18/03/24 00:06:21 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+    18/03/24 03:14:21 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
     
-    1521814242,210287612,1572441,3584
-    1521814242,210291138,1572441,4096
-    1521814242,210291138,1572442,3584
-    1521814242,210294804,1572442,4096
-    1521814242,212248323,1572593,3584
-    1521814242,212448598,1572593,4096
-    1521814242,212448598,1572594,3584
-    1521814242,212452423,1572594,4096
-    1521814242,212452423,1572595,3584
-    1521814242,212455939,1572595,4096
-    1521814242,212455939,1572596,1952
-    1521814242,212463433,1572596,4096
+    1521825179,345658709,518766,3584
+    1521825179,345662182,518766,4096
+    1521825179,345662182,518767,3584
+    1521825179,345672244,518767,4096
+    1521825179,348702080,518918,3584
+    1521825179,348705598,518918,4096
+    1521825179,348705598,518919,3584
+    1521825179,348709139,518919,4096
+    1521825179,348709139,518920,3584
+    1521825179,348712537,518920,4096
+    1521825179,348712537,518921,1952
+    1521825179,348721085,518921,4096
 
-The above results means the pair of UNIX time in second, UNIX time in nanosecond, LBA, size of sector.
+The above results means the pair of UNIX time in second, UNIX time in nanosecond, LBA, size of sector. Your results, especially UNIX time and LBA, may be different with the above results.
 
 
 ### Search with sampling 
 
-Next, reduce the search time by using sampling technique. 
-Create the sampled HashDB.
+Next, reduce the search time by using sampling technique. The following example creates a sampled HashDBi with sampling rate of 0.5%.
 
     [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5-0.05
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.samplingIndex /preservation-vm-1.md5 /preservation-vm-1.md5-0.05 0.05
@@ -439,13 +438,23 @@ Create the sampled HashDB.
 
 Seach a target file in the sampled HashDB.
 
-Check the result. If you are lucky, you can see the detected sector.
+    [root@localhost tests]# hadoop fs -rmr /results
+    [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashSearch ./sample_file/true /preservation-vm-1.md5-0.05 /results
+    ....
+    	File Input Format Counters 
+		Bytes Read=6580363
+	File Output Format Counters 
+		Bytes Written=34
+   3880:ms
 
-    [root@localhost tests]# hadoop fs -text /results/part-r-0000018/03/24 00:30:29 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Check the result. If you are lucky, you can see the detected sector like below.
+
+    [root@localhost tests]# hadoop fs -text /results/part-r-00000
+18/03/24 03:21:57 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
     
-    1521814242,210287612,1572441,3584
+    1521825179,348705598,518918,4096
 
-If you could not find any sectors, change the sampling rate (such as 0.1) and try again!
+If you could not find any sectors, change the sampling rate (such as 0.1) and try the above steps again!
 
 
 ## Authors
