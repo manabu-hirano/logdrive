@@ -87,25 +87,57 @@ After the kernel installation, you need to edit your grub configuration file and
     
     [root@localhost setup]# reboot
 
+Here, you need to select "Xen (4.1.2) with Cent OS (2.6.32.57)" at grub menu.
 After rebooting your machine, execute the following scripts.
 
     [root@localhost setup]# bash 3-setup-network.sh
+    ....
+    --- Is your network interface eth0?
+    y or n) [ ENTER "y" if your NIC is eth0 ]
+    ....
+    --- Are you sure to copy /tmp/ifcfg-eth0 
+    ....
+    y or n) [ ENTER "y" ]
+    ....
+    --- Are you sure to copy ./network-settings/ifcfg-xenbr0 
+    ....
+    y or n) [ ENTER "y" ]
+    ....
+    [root@localhost setup]# ip a
+        [ CHECK xenbr0 has IP address and eth0 has no IP address (bridged to xenbr0) ]
+
+
     [root@localhost setup]# bash 4-setup-benchmark.sh
-    [root@localhost setup]# bash 5-setup-hadoop.sh
+    ....
+    --- Finished 4-setup-benchmark.sh
+    
+    [root@localhost setup]# bash 5-setup-hadoop.sh 
+    Are you sure you want to install java?
+    ....
+    y or n) [ ENTER "y" ]
+    ....
+    Are you sure you want to install hadoop-2.9.0.tar.gz?
+    y or n) [ ENTER "y" ]
+    ....
+    Are you sure you want to update your ~/.bash_profile?
+    y or n) [ ENTER "y" ]
+    ....
+    
+    [root@localhost setup]# source ~/.bash_profile
+
 
 ## Installing guest OS for tests
 
 First, you need to specify IP address of your computer as follows:
 
-    cd tests
-    vi ipaddr_definition.sh
-    HOST_IP=192.168.1.130  # YOUR COMPUTER'S IP ADDRESS
-    GUEST_IP_SUFFIX_BASE=150  # SUFFIX OF GUEST OS'S IP ADDRESS
+    [root@localhost setup]# cd ../tests
+    [root@localhost tests]# vi ipaddr_definition.sh
+     HOST_IP=192.168.1.130  # YOUR COMPUTER'S IP ADDRESS
+     GUEST_IP_SUFFIX_BASE=150  # SUFFIX OF GUEST OS'S IP ADDRESS
 
 In our script, host's IP address is ${HOST_IP}, and guest OS's IP addresses are 192.168.1.{151, 152, 153, ...}/24 when you use the above setting.
 
-    cd tests
-    bash make-VMs.sh
+    [root@localhost tests]# bash make-VMs.sh
     ## This scripts makes VMs by answering questions
     ##
     Please specify the disk type you want to use:
@@ -122,15 +154,16 @@ In our script, host's IP address is ${HOST_IP}, and guest OS's IP addresses are 
     The installation directory of VMs is set to /benchmark
     Are you sure to proceed to install VMs?
     y or n) [ ENTER y ]
+    .... [ INSTALLATION OF GUEST OS ON VM TAKES A FEW MINUTES ] ...
 
-while the script is installing OS on VM, you can check the progress as follows:
+While the script is installing OS on VM, you can check the progress as follows:
 
     # To list virtual machines
-    xl list
+    [root@localhost tests]# xl list
     # To switch console of a virtual machine
-    xl console tap:preservation-vm-1
+    [root@localhost tests]# xl console tap:preservation-vm-1
     # To show the output of make-VMs.sh (change the last number to specify a VM)
-    tail -f /tmp/preservation-vm-1.log
+    [root@localhost tests]# tail -f /tmp/preservation-vm-1.log
 
 The LogDrive database of the installed virtual machine is /benchmark/preservation-vm-1.img.
 
@@ -138,18 +171,18 @@ The LogDrive database of the installed virtual machine is /benchmark/preservatio
 
 If you need to execute benchmark software on VMs, use the following instructions.
 
-    rpm -ivh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-    yum -y install sshpass
+    [root@localhost tests]# rpm -ivh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    [root@localhost tests]# yum -y install sshpass
     
-    bash auto-setup-VMs.sh 2 1
-     ## 2 for preservation, 1 for the number of VMs to be setup
+    [root@localhost tests]# bash auto-setup-VMs.sh 2 1
+      ## 2 for preservation, 1 for the number of VMs to be setup
 
 ## Running the benchmark software on VMs
 
 First, you need to add a user "download" with password "test" as follows to gather the results of benchmark software on multiple VMs.
 
-    useradd download
-    passwd download 
+    [root@localhost tests]# useradd download
+    [root@localhost tests]# passwd download 
      Changing password for user download.
      New password: [ ENTER "test" ]
      BAD PASSWORD: it is too short
@@ -157,8 +190,8 @@ First, you need to add a user "download" with password "test" as follows to gath
      Retype new password: [ ENTER "test" ]
 
     # Copy original logdrive file
-    cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig
-    bash auto-runtest-VMs.sh
+    [root@localhost tests]# cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig
+    [root@localhost tests]# bash auto-runtest-VMs.sh
 
 You can check the results of benchmark software on VMs as CSV files in /benchmark/results/. If you need to execute further benchmark, see the detail of the auto-runtest-VMs.sh.
 
