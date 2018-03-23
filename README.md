@@ -6,9 +6,9 @@ LogDrive is surveillance and forensic analysis tools for Xen-based IaaS cloud en
 
 ### Requirement
 
-You need a temporary PC to test this software and tutorial. The LogDrive framework uses custom Linux kernel so that we cannot use Docker unfortunately. We tested this tutorial on a PC with 8 GB RAM and 128 GB SSD. Please note that we did not test this tutorial on a virtual machine instance such as an EC2 instance yet (i.e., a virtual machine runs on a virtual machine).
+You need a temporary PC to test this software and tutorial. The LogDrive framework uses custom Linux kernel so that we cannot use Docker unfortunately. We tested this tutorial on a PC with 8 GB RAM and 128 GB SSD. Please note that we did not test this tutorial on a virtual machine such as an EC2 instance yet (i.e., a virtual machine runs on a virtual machine).
 
-### Prerequisites: operating system 
+### Prerequisites: host operating system 
 
 Download CentOS-6.9-x86_64-bin-DVD1.iso from https://www.centos.org and boot your computer using the burnt disc. Install CentOS 6.9 on your temporary computer with the following options. 
 
@@ -32,26 +32,26 @@ Before the next step, reboot your computer.
 
 ### Prerequisites: downloading related software
 
-Clone Git repository. If you cannot use network, try "ifup eth0" (change the argument if your NIC is not eth0).
+Clone Git repository. If you cannot connect your local network, try "ifup eth0" (change the argument if your NIC is not eth0).
 
     [root@localhost ~]# unset SSH_ASKPASS
     [root@localhost ~]# git clone https://github.com/manabu-hirano/logdrive.git
 
-Execute ./download/download.sh script to obtain the following software.
-
-    [root@localhost ~]# cd logdrive/download
-    [root@localhost download]# bash download.sh
+Run ./download/download.sh script to obtain the following software.
 
 - hadoop-2.9.0.tar.gz
 - bridge-utils-1.5-3.fc17.src.rpm
 - xen-4.1.2.tar.gz
 - CentOS-5.11-i386-bin-DVD-1of2.iso (Guest OS)
 
+    [root@localhost ~]# cd logdrive/download
+    [root@localhost download]# bash download.sh
+
 Confirm the above software are in ./download directory.
 
 ### Prerequisites: installing LogDrive and related software
 
-Execute setup scripts as follows:
+Run setup scripts as follows.
 
     [root@localhost logdrive]# cd ../setup
     [root@localhost setup]# bash 0-setup-bridge-utils.sh
@@ -70,7 +70,7 @@ Execute setup scripts as follows:
     ...
       [ THIS SCRIPT WILL TAKE LONGER THAN THE PREVIOUS SCRIPT ]
 
-After the kernel installation, you need to edit your grub configuration file and /etc/fstab, and reboot your computer. Please see the details in the end of the output of the 2-setup-kernel.sh.
+After the kernel installation, you need to edit /etc/grub.conf and /etc/fstab, and reboot your computer. Please see the details in the end of the output of the 2-setup-kernel.sh.
 
     [root@localhost setup]# vi /etc/grub.conf
        [ INSERT THE FOLLOWING NEW ENTRY ]
@@ -82,13 +82,12 @@ After the kernel installation, you need to edit your grub configuration file and
         module /initramfs-2.6.32.57.img
     
     [root@localhost setup]# vi /etc/fstab
-       [ ADD THE FOLLOWING LINE ]
+       [ ADD THE FOLLOWING LINE BELOW THE LAST LINE ]
     xenfs                   /proc/xen               xenfs   defaults        0 0
     
     [root@localhost setup]# reboot
 
-Here, you need to select "Xen (4.1.2) with Cent OS (2.6.32.57)" at grub menu.
-After rebooting your machine, execute the following scripts.
+During rebooting process, you need to select "Xen (4.1.2) with Cent OS (2.6.32.57)" at grub menu. After rebooting your machine, run the following scripts.
 
     [root@localhost setup]# bash 3-setup-network.sh
     ....
@@ -128,14 +127,14 @@ After rebooting your machine, execute the following scripts.
 
 ### Installing guest OS for tests
 
-First, you need to specify IP address of your computer as follows:
+First, specify IP addresses of your computer and virtual machines as follows. In the following example, we assume that you have free IP address of 192.168.1.{151,152,...} for virtual machines in addition to your computer's IP address (i.e., 192.168.1.130). Please note that netmask has been fixed at 24 in the test scripts.
 
     [root@localhost setup]# cd ../tests
     [root@localhost tests]# vi ipaddr_definition.sh
      HOST_IP=192.168.1.130  # YOUR COMPUTER'S IP ADDRESS
      GUEST_IP_SUFFIX_BASE=150  # SUFFIX OF GUEST OS'S IP ADDRESS
 
-In our script, host's IP address is ${HOST_IP}, and guest OS's IP addresses are 192.168.1.{151, 152, 153, ...}/24 when you use the above setting.
+Run make-VMs.sh to install CentOS5 on new virtual machine.
 
     [root@localhost tests]# bash make-VMs.sh
     ## This scripts makes VMs by answering questions
