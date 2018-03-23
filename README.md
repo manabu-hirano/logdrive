@@ -314,13 +314,14 @@ Finally, we have to unmount the restored devices and to remove the LogDrive inst
 
 In the indexing and searching phase, we use Hadoop framework. First you need to format Hadoop distributed file system (HDFS).
 
+    [root@localhost setup]# source ~/.bash_profile
     [root@localhost setup]# hdfs namenode -format
     ....
     /************************************************************
     SHUTDOWN_MSG: Shutting down NameNode at localhost/127.0.0.1
     ************************************************************/
 
-After formating the HDFS, start dfs and yarn services.
+After formating the HDFS, start dfs and yarn services. You need to input your password four times in this step. (You can skip these inputs if you use PKI authentication)
 
     [root@localhost setup]# /usr/local/hadoop-2.9.0/sbin/start-all.sh 
     This script is Deprecated. Instead use start-dfs.sh and start-yarn.sh
@@ -351,11 +352,11 @@ Then, compile the Hadoop MapReduce programs.
     /usr/local/hadoop-2.9.0/share/hadoop/common/hadoop-common-2.9.0.jar:/usr/local/hadoop-2.9.0/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.9.0.jar:./
     [root@localhost tests]# 
 
-When the compilation was success, you can foud AnalysisSystem.jar in ./tests directory.
+When the compilation was success, you can found AnalysisSystem.jar in ./tests directory.
 
 ### Indexing
 
-First, convert LogDrive database file in local file system into SequenceFile in HDFS.
+First, convert a LogDrive database file into SequenceFile in HDFS.
 
     [root@localhost tests]# hadoop fs -rm /preservation-vm-1.seq
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.convertToSequenceFileFromLdLocal /benchmark/preservation-vm-1.img /preservation-vm-1.seq /tmp/info.txt
@@ -364,8 +365,7 @@ First, convert LogDrive database file in local file system into SequenceFile in 
        [ WAIT A FEW MINUTES... ]
     [root@localhost tests]# 
 
-You can check the output file via http://localhost:50070/explorer.html#/.
-Next, create HashDB from the created SequenceFile in the above step.
+You can check the output file (i.e., /preservation-vm-1.seq) via http://localhost:50070/explorer.html#/. Then, create HashDB from the SequenceFile that is created in the above step.
 
     [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashIndex /preservation-vm-1.seq /preservation-vm-1.md5
@@ -381,7 +381,7 @@ Next, create HashDB from the created SequenceFile in the above step.
 
 You can check the output HashDB directory of preservation-vm-1.md5 via http://localhost:50070/explorer.html#/.
 
-If you check the contents of the HashDB, use hadoop command with fs option. You will be able to see MD5, UNIX timestamps, LBA, and size of LBA.
+Use hadoop command with fs option to see the output as follows. Each line consits of MD5 hash, UNIX time in second, UNIX time in nanosecond, LBA, and size of data.
  
     [root@localhost tests]# hadoop fs -text /preservation-vm-1.md5/part-r-00000
     ....
@@ -389,7 +389,7 @@ If you check the contents of the HashDB, use hadoop command with fs option. You 
     01aa484db799e7d2febbea1d486cc824	1521814332,774548310,1889029,1344
        [ ENTER CTRL-C TO STOP ]
 
-### Search without sampling (1)
+### Search without sampling 
 
 A hashSearch class searches a file using sector-hash based file detection method.
 
@@ -421,7 +421,7 @@ Check the result of sector-hash based file deteciton.
 The above results means the pair of UNIX time in second, UNIX time in nanosecond, LBA, size of sector.
 
 
-### Search with sampling (2)
+### Search with sampling 
 
 Next, reduce the search time by using sampling technique. 
 Create the sampled HashDB.
