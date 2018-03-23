@@ -10,7 +10,7 @@ Download CentOS-6.9-x86_64-bin-DVD1.iso from https://www.centos.org and boot you
 
 - Basic Storage Devices
 - Minimal Desktop
- - select "Customize now" -> select "Development" -> check "Development Tools"
+- select "Customize now" -> select "Development" -> check "Development Tools"
 
 After the installation, disable firewall, selinux, and Network Manager services.
 
@@ -131,11 +131,117 @@ First, you need to add a user "download" with password "test" as follows to gath
 
 You can check the results of benchmark software on VMs as CSV files in /benchmark/results/. If you need to execute further benchmark, see the detail of the auto-runtest-VMs.sh.
 
-### Preservation
+### Preservation mode on virtual machines
 
 Typical steps to start and to shutdown virtual machines with LogDrive support as follows.
 
-### Restoration
+First, you need to obtain the current UNIX time to restore the LogDrive after this test.
+
+    [root@localhost tests]# date +%s
+    1521800128
+
+The above UNIX time will be needed to restore the previous state of the LogDrive database.
+
+    xl create -c /benchmark/preservation-vm-1.postinstall.xl.cfg
+    ...
+    preservation-vm-1 login: [ ENTER "root" ]
+    Password: [ ENTER "test" ]
+    [root@preservation-vm-1 ~]# echo "THIS IS THE TEST" > /root/test.txt 
+
+The operations that are executed on the virtual machines are recorded in LogDrive database (i.e., /benchmark/preservation-vm-1.img). Finally, you need to shutdown the virtual machine.
+
+    [root@preservation-vm-1 ~]# shutdown -h now
+    ....
+    System halted.
+
+After shuting down the virtual machine, remove the blktap instance. This step flushes the indexes of the LogDrive database.
+
+    [root@localhost logdrive]# tap-ctl list
+    25076  0    0 preservation /benchmark/preservation-vm-1.img
+    [root@localhost tests]# bash ./umount.sh /benchmark/preservation-vm-1.img 
+    Destroying tap device process 25075, minor 0 ...
+    [root@localhost tests]# tap-ctl list
+    [root@localhost tests]# [ CHECK THERE IS NO BLKTAP INSTANCE HERE ]
+
+
+To compare between the restored state and the latest state of the LogDrive database, get the current UNIX time again.
+
+    [root@localhost tests]# date +%s
+    1521800391
+ 
+At this point, you can use the LogDrive database (i.e., /benchmark/preservation-vm-1.img) in restoration mode.
+
+### Restoration mode using LogDrive database
+
+First, you need mount points to restore the LogDrive database. In this turorial, we use the following mount points (If you have problems, chenge the mount points).
+
+    [root@localhost tests]# mkdir /mnt/timetravel-1
+    [root@localhost tests]# mkdir /mnt/timetravel-2
+
+In this tutorial, we restore two previous virtual disks to compare the difference between them. The last argument after colon is the UNIX time at which the disk is restored.
+
+    [root@localhost tests]# tap-ctl create -a timetravel:/benchmark/preservation-vm-1.img:1521800128
+    /dev/xen/blktap-2/tapdev1  <= CHECK THIS NAME
+    [root@localhost tests]# tap-ctl create -a timetravel:/benchmark/preservation-vm-1.img:1521800391
+    /dev/xen/blktap-2/tapdev2  <= CHECK THIS NAME
+
+Now, we have two virtual block devices named tapdev1 and tapdev2. These two devices are created by LogDrive framework. Let's check the internal state of the virtual device.
+
+    [root@localhost tests]# fdisk -l -u /dev/xen/blktap-2/tapdev1
+    
+    Disk /dev/xen/blktap-2/tapdev1: 10.7 GB, 10737418240 bytes
+    255 heads, 63 sectors/track, 1305 cylinders, total 20971520 sectors
+    Units = sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    Disk identifier: 0x0004d192
+
+                     Device Boot      Start         End      Blocks   Id  System
+    /dev/xen/blktap-2/tapdev1p1   *          63    18908504     9454221   83  Linux
+    /dev/xen/blktap-2/tapdev1p2        18908505    20948759     1020127+  82  Linux swap / Solaris
+
+The two devices have the identical partition table, so we can mount these two devices in the same way except for a mount point. Mount root partition of the different UNIXT time in read only mode as follows:
+
+    [root@localhost ]# mount -t ext3 -o ro,offset=`expr 63 \* 512` /dev/xen/blktap-2/tapdev1 /mnt/timetravel-1 
+    [root@localhost ]# mount -t ext3 -o ro,offset=`expr 63 \* 512` /dev/xen/blktap-2/tapdev2 /mnt/timetravel-2
+
+Let's check the difference between the two restored disks.
+
+    [root@localhost ]# diff -r /mnt/timetravel-1/root/ /mnt/timetravel-2/root/
+    diff -r /mnt/timetravel-1/root/.bash_history /mnt/timetravel-2/root/.bash_history
+    19a20,23
+    > ls
+    > echo "THIS IS THE TEST" > /root/test.txt
+    > less /root/test.txt 
+    > shutdown -h now
+    Only in /mnt/timetravel-2/root/: test.txt
+    [root@localhost ]# cat /mnt/timetravel-2/root/test.txt 
+    THIS IS THE TEST
+    [root@localhost ]# 
+
+You will found the difference in .bash_history and the newly created file "test.txt".
+
+Finally, we have to unmount the restored devices and to remove the LogDrive instance as follows.
+
+    [root@localhost tests]# tap-ctl list
+    1928  1    0 timetravel /benchmark/preservation-vm-1.img:1521800128
+    1935  2    0 timetravel /benchmark/preservation-vm-1.img:1521800391
+    [root@localhost tests]# df
+    Filesystem           1K-blocks     Used Available Use% Mounted on
+    ....
+    /dev/xen/blktap-2/tapdev1
+                       9158060  2691200   5994152  31% /mnt/timetravel-1
+    /dev/xen/blktap-2/tapdev2
+                       9158060  2691240   5994112  31% /mnt/timetravel-2
+    
+    [root@localhost tests]# bash ./umount.sh /benchmark/preservation-vm-1.img:1521800128 /mnt/timetravel-1
+    Destroying tap device process 1928, minor 1 ...
+    [root@localhost tests]# bash ./umount.sh /benchmark/preservation-vm-1.img:1521800391 /mnt/timetravel-2
+    Destroying tap device process 1935, minor 2 ...
+    [root@localhost tests]# tap-ctl list
+    [root@localhost tests]# [ CONFIRM NO BLKTAP HERE ]
+    [root@localhost tests]# df
+       [ CONFIRM THERE IS NO MOUNT POINTS RELATED TO LOGDRIVE HERE ]
 
 ### Indexing
 
