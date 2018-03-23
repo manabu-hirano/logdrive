@@ -445,12 +445,12 @@ Seach a target file in the sampled HashDB.
 		Bytes Read=6580363
 	File Output Format Counters 
 		Bytes Written=34
-   3880:ms
+    3880:ms
 
 Check the result. If you are lucky, you can see the detected sector like below.
 
     [root@localhost tests]# hadoop fs -text /results/part-r-00000
-18/03/24 03:21:57 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+    18/03/24 03:21:57 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
     
     1521825179,348705598,518918,4096
 
