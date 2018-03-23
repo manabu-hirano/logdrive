@@ -170,7 +170,7 @@ The LogDrive database of the installed virtual machine is /benchmark/preservatio
 
 You can skip this section.
 
-If you need to execute benchmark software on VMs, use the following instructions.
+If you have to run benchmark software on VMs, follow the following instructions.
 
     [root@localhost tests]# rpm -ivh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
     [root@localhost tests]# yum -y install sshpass
@@ -178,7 +178,7 @@ If you need to execute benchmark software on VMs, use the following instructions
     [root@localhost tests]# bash auto-setup-VMs.sh 2 1
       ## 2 for preservation, 1 for the number of VMs to be setup
 
-Before running benchmark on virtual machines, you need to add a user "download" with password "test" as follows to gather the results of benchmark software on multiple VMs.
+Before running benchmark software on virtual machines, add new user named "download" with password "test" to collect the results from multiple VMs automatically.
 
     [root@localhost tests]# useradd download
     [root@localhost tests]# passwd download 
@@ -188,25 +188,25 @@ Before running benchmark on virtual machines, you need to add a user "download" 
      BAD PASSWORD: is too simple
      Retype new password: [ ENTER "test" ]
 
-Then, execute benchmark script as follows.
+Then, run benchmark script as follows.
 
     # Copy original logdrive file
     [root@localhost tests]# cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig
     [root@localhost tests]# bash auto-runtest-VMs.sh
       [ THIS TAKES OVER TEN MINUTES ]
 
-You can check the results as CSV files in /benchmark/results/. If you need to execute further benchmark, edit auto-runtest-VMs.sh.
+Check the result in /benchmark/results/*.csv. If you need further complex benchmark, edit auto-runtest-VMs.sh.
 
 ### Preservation mode on virtual machines
 
 Typical steps to start and to shutdown virtual machines with LogDrive support as follows.
 
-First, you need to obtain the current UNIX time to restore the LogDrive after this test.
+First, check the current UNIX time to restore the LogDrive after this test.
 
     [root@localhost tests]# date +%s
     1521826741
 
-The above UNIX time will be needed to restore the previous state of the LogDrive database.
+The above UNIX time is needed to restore the previous state of the LogDrive database.
 
     [root@localhost tests]# xl create -c /benchmark/preservation-vm-1.postinstall.xl.cfg
     ...
@@ -214,13 +214,13 @@ The above UNIX time will be needed to restore the previous state of the LogDrive
     Password: [ ENTER "test" ]
     [root@preservation-vm-1 ~]# echo "THIS IS TEST" > /root/test.txt 
 
-The operations that are executed on the virtual machine are recorded in LogDrive database (i.e., /benchmark/preservation-vm-1.img). Finally, you need to shutdown the virtual machine.
+The operations that are executed on the virtual machine are recorded in a LogDrive database (i.e., /benchmark/preservation-vm-1.img). Finally, shutdown the virtual machine.
 
     [root@preservation-vm-1 ~]# shutdown -h now
     ....
     System halted.
 
-After shutting down the virtual machine, remove the blktap instance. This step flushes the indexes of the LogDrive database.
+After shutting down the virtual machine, remove the blktap instance. This important process flushes the indexes of the LogDrive database.
 
     [root@localhost logdrive]# tap-ctl list
     25076  0    0 preservation /benchmark/preservation-vm-1.img
@@ -239,7 +239,7 @@ At this point, you can use the LogDrive database (i.e., /benchmark/preservation-
 
 ### Restoration mode using LogDrive database
 
-First, you need mount points to restore the LogDrive database. In this turorial, we use the following mount points (If you have problems, chenge the mount points).
+First, create mount points to restore the LogDrive database. If you have problems, change the mount points.
 
     [root@localhost tests]# mkdir /mnt/timetravel-1
     [root@localhost tests]# mkdir /mnt/timetravel-2
@@ -266,7 +266,7 @@ Now, we have two virtual block devices named tapdev0 and tapdev1. These two devi
     /dev/xen/blktap-2/tapdev0p1   *          63    18908504     9454221   83  Linux
     /dev/xen/blktap-2/tapdev0p2        18908505    20948759     1020127+  82  Linux swap / Solaris
 
-The two devices have the identical partition table, so we can mount these two devices in the same way except for a mount point. Mount root partition of the different UNIXT time in read only mode as follows:
+The two restored virtual block devices have the identical partition table, so we can mount them in the same way except for a mount point. Mount root partition of the different UNIX time in read only mode as follows:
 
     [root@localhost ]# mount -t ext3 -o ro,offset=`expr 63 \* 512` /dev/xen/blktap-2/tapdev0 /mnt/timetravel-1 
     [root@localhost ]# mount -t ext3 -o ro,offset=`expr 63 \* 512` /dev/xen/blktap-2/tapdev1 /mnt/timetravel-2
@@ -276,15 +276,15 @@ Let's check the difference between the two restored disks.
     [root@localhost tests]# diff -r /mnt/timetravel-1/root/ /mnt/timetravel-2/root/
     Only in /mnt/timetravel-2/root/: .bash_history
     Only in /mnt/timetravel-2/root/: test.txt
-       [ THE ABOVE RESULT DIFFER IN SOME CASES ]
+       [ THE ABOVE RESULT MAY DIFFER BECAUSE OF YOUR ACTIONS ON THE VIRTUAL MACHINE ]
     
     [root@localhost ]# cat /mnt/timetravel-2/root/test.txt 
     THIS IS THE TEST
     [root@localhost ]# 
 
-You will found the difference in .bash_history and the newly created file "test.txt".
+At least, you will found the differences in .bash_history and in the newly created file "test.txt".
 
-Finally, we have to unmount the restored devices and to remove the LogDrive instance as follows.
+Finally, unmount the restored devices and to remove the LogDrive instance as follows. This step cannot be skipped.
 
     [root@localhost tests]# tap-ctl list
     6368  0    0 timetravel /benchmark/preservation-vm-1.img:1521826741
@@ -311,7 +311,7 @@ Finally, we have to unmount the restored devices and to remove the LogDrive inst
 
 ### Prerequisites: formatting HDFS and compiling MapReduce programs
 
-In the indexing and searching phase, we use Hadoop framework. First you need to format Hadoop distributed file system (HDFS).
+In the indexing and searching phases, we use Hadoop framework. First you have to format Hadoop distributed file system (HDFS).
 
     [root@localhost setup]# source ~/.bash_profile
     [root@localhost setup]# hdfs namenode -format
@@ -320,7 +320,7 @@ In the indexing and searching phase, we use Hadoop framework. First you need to 
     SHUTDOWN_MSG: Shutting down NameNode at localhost/127.0.0.1
     ************************************************************/
 
-After formating the HDFS, start dfs and yarn services. You need to input your password four times in this step. (You can skip these inputs if you use PKI authentication)
+After formatting your HDFS, start dfs and yarn services. You will need to input your password four times in this step. You can skip these inputs when you use PKI authentication.
 
     [root@localhost setup]# /usr/local/hadoop-2.9.0/sbin/start-all.sh 
     This script is Deprecated. Instead use start-dfs.sh and start-yarn.sh
@@ -364,7 +364,7 @@ First, convert a LogDrive database file into SequenceFile in HDFS.
        [ WAIT A FEW MINUTES... ]
     [root@localhost tests]# 
 
-You can check the output file (i.e., /preservation-vm-1.seq) via http://localhost:50070/explorer.html#/. Then, create HashDB from the SequenceFile that is created in the above step.
+Check the output file (i.e., /preservation-vm-1.seq) via http://localhost:50070/explorer.html#/. Then, create HashDB from SequenceFile that is created in the above step.
 
     [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashIndex /preservation-vm-1.seq /preservation-vm-1.md5
@@ -378,9 +378,9 @@ You can check the output file (i.e., /preservation-vm-1.seq) via http://localhos
 		Bytes Written=112712198
     78193:ms
 
-You can check the output HashDB directory of preservation-vm-1.md5 via http://localhost:50070/explorer.html#/.
+Check the output HashDB directory (i.e., /preservation-vm-1.md5/) via http://localhost:50070/explorer.html#/.
 
-Use hadoop command with fs option to see the output as follows. Each line consits of MD5 hash, UNIX time in second, UNIX time in nanosecond, LBA, and size of data.
+Use hadoop command with fs option to see the output. Each line consits of MD5 hash, UNIX time in second, UNIX time in nanosecond, LBA, and size of data.
  
     [root@localhost tests]# hadoop fs -text /preservation-vm-1.md5/part-r-00000
     ....
@@ -390,16 +390,16 @@ Use hadoop command with fs option to see the output as follows. Each line consit
 
 ### Search without sampling 
 
-A hashSearch class searches a file using sector-hash based file detection method.
+A hashSearch class searches a file in a HashDB using sector-hash based file detection method.
 
-First, delete /results directory in HDFS. Then, execute sector-hash based file detection. The following example searches "true" program stored as /bin/true in the guest operating system.
+First, delete /results directory in HDFS. Then, run sector-hash based file detection class. The following example searches "true" program stored as /bin/true in the guest operating system.
 
     [root@localhost tests]# hadoop fs -rmr /results
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashSearch ./sample_file/true /preservation-vm-1.md5 /results
     ....
       [ WAIT A FEW SECONDS ... ]
 
-Check the result of sector-hash based file deteciton.
+Check the result.
 
     [root@localhost tests]# hadoop fs -text /results/part-r-00000
     18/03/24 03:14:21 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
@@ -417,12 +417,11 @@ Check the result of sector-hash based file deteciton.
     1521825179,348712537,518921,1952
     1521825179,348721085,518921,4096
 
-The above results means the pair of UNIX time in second, UNIX time in nanosecond, LBA, size of sector. Your results, especially UNIX time and LBA, may be different with the above results.
-
+Each line consists of UNIX time in second, UNIX time in nanosecond, LBA, size of sector. Your results, especially UNIX time and LBA, may be different to the above results. These write logs have identical sectors of file "true".
 
 ### Search with sampling 
 
-Next, reduce the search time by using sampling technique. The following example creates a sampled HashDBi with sampling rate of 0.5%.
+Next, reduce search time by using sampling technique. The following example creates a sampled HashDB with sampling rate of 0.5%.
 
     [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5-0.05
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.samplingIndex /preservation-vm-1.md5 /preservation-vm-1.md5-0.05 0.05
@@ -446,14 +445,14 @@ Seach a target file in the sampled HashDB.
 		Bytes Written=34
     3880:ms
 
-Check the result. If you are lucky, you can see the detected sector like below.
+Check the result. If you are lucky, you can see a few detected sector like below.
 
     [root@localhost tests]# hadoop fs -text /results/part-r-00000
     18/03/24 03:21:57 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
     
     1521825179,348705598,518918,4096
 
-If you could not find any sectors, change the sampling rate (such as 0.1) and try the above steps again!
+If you could not find any sectors, change the sampling rate (such as 0.1) and try the above steps again ;-)
 
 
 ## Authors
