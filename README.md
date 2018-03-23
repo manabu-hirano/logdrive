@@ -146,7 +146,7 @@ The above UNIX time will be needed to restore the previous state of the LogDrive
     ...
     preservation-vm-1 login: [ ENTER "root" ]
     Password: [ ENTER "test" ]
-    [root@preservation-vm-1 ~]# echo "THIS IS THE TEST" > /root/test.txt 
+    [root@preservation-vm-1 ~]# echo "THIS IS TEST" > /root/test.txt 
 
 The operations that are executed on the virtual machines are recorded in LogDrive database (i.e., /benchmark/preservation-vm-1.img). Finally, you need to shutdown the virtual machine.
 
@@ -243,7 +243,7 @@ Finally, we have to unmount the restored devices and to remove the LogDrive inst
     [root@localhost tests]# df
        [ CONFIRM THERE IS NO MOUNT POINTS RELATED TO LOGDRIVE HERE ]
 
-### Indexing
+### Setup Hadoop and MapReduce programs
 
 In the indexing and searching phase, we use Hadoop framework. We format HDFS first.
 
@@ -274,10 +274,57 @@ After formating the HDFS, start dfs and yarn services.
 
 Check the status of your HDFS via http://localhost:50070/. If you cannot see the management screen, check /usr/local/hadoop-2.9.0/logs/*.log.
 
+Then, compile the Hadoop MapReduce programs.
 
+    [root@localhost tests]# bash compile.sh 
+    Are you sure you want to delete AnalysisSystem.jar and ./jp directory?
+    y or n) [ ENTER "y" ]
+    ....
+    Please note that these classes need the following external jar files to execute:
+    /usr/local/hadoop-2.9.0/share/hadoop/common/hadoop-common-2.9.0.jar:/usr/local/hadoop-2.9.0/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.9.0.jar:./
+    [root@localhost tests]# 
 
-### Search
+When the compilation was success, you can foud AnalysisSystem.jar in ./tests directory.
 
+### Indexing
+
+First, convert LogDrive database file in local file system into SequenceFile in HDFS.
+
+    [root@localhost tests]# hadoop fs -rm /preservation-vm-1.seq
+    [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.convertToSequenceFileFromLdLocal /benchmark/preservation-vm-1.img /preservation-vm-1.seq /tmp/info.txt
+    18/03/23 23:19:32 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+    18/03/23 23:19:33 INFO compress.CodecPool: Got brand-new compressor [.deflate]
+       [ WAIT A FEW MINUTES... ]
+    [root@localhost tests]# 
+
+You can check the output file via http://localhost:50070/explorer.html#/.
+Next, create HashDB from the created SequenceFile in the above step.
+
+    [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5
+    [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashIndex /preservation-vm-1.seq /preservation-vm-1.md5
+    ....
+      [ WAIT A FEW MINUTES ... ]
+    ....
+    		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=2417399078
+	File Output Format Counters 
+		Bytes Written=112712198
+    78193:ms
+
+You can check the output HashDB directory of preservation-vm-1.md5 via http://localhost:50070/explorer.html#/.
+
+If you check the contents of the HashDB, use hadoop command with fs option. You will be able to see MD5, UNIX timestamps, LBA, and size of LBA.
+ 
+    [root@localhost tests]# hadoop fs -text /preservation-vm-1.md5/part-r-00000
+    ....
+    01aa484db799e7d2febbea1d486cc824	1521814332,774557330,1889029,4096
+    01aa484db799e7d2febbea1d486cc824	1521814332,774548310,1889029,1344
+       [ ENTER CTRL-C TO STOP ]
+
+### Search (1): sector-hash based file detection
+
+### Search (2): simple string search
 
 
 ## Authors

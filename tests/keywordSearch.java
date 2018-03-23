@@ -1,4 +1,4 @@
-package jp.ac.toyota_ct.analysis_sys;
+2package jp.ac.toyota_ct.analysis_sys;
 
 import java.io.*;
 import java.security.*;
@@ -29,7 +29,7 @@ import java.math.BigDecimal;
  * 
  */
 public class keywordSearch{
-    static class keyMapper extends Mapper<BytesWritable, BytesWritable, Text, NullWritable>{
+    static class keyMapper extends Mapper<ByteWritable, BytesWritable, Text, NullWritable>{
 	byte[] stb;
 	String str;
 

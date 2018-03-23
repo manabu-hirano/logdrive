@@ -4,4 +4,7 @@
 *.tar.gz
 *.rpm
 *.iso
+*.class
+*.jar
+tests/jp/*
 
