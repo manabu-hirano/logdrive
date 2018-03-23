@@ -36,7 +36,6 @@ mv *.class ${PACKAGE_NAME}
 javac -classpath ${JAVA_CLASSPATH} ${JAVAC_OPT} hashIndex.java
 javac -classpath ${JAVA_CLASSPATH} ${JAVAC_OPT} samplingIndex.java
 javac -classpath ${JAVA_CLASSPATH} ${JAVAC_OPT} hashSearch.java
-javac -classpath ${JAVA_CLASSPATH} ${JAVAC_OPT} keywordSearch.java
 javac -classpath ${JAVA_CLASSPATH} ${JAVAC_OPT} convertToSequenceFileFromLdLocal.java
 
 echo "Moving the following compiled class files to ${PACKAGE_NAME}..."

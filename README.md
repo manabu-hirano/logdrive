@@ -322,14 +322,68 @@ If you check the contents of the HashDB, use hadoop command with fs option. You 
     01aa484db799e7d2febbea1d486cc824	1521814332,774548310,1889029,1344
        [ ENTER CTRL-C TO STOP ]
 
-### Search (1): sector-hash based file detection
+### Search without sampling (1)
 
-### Search (2): simple string search
+A hashSearch class searches a file using sector-hash based file detection method.
+
+First, delete /results directory in HDFS. Then, execute sector-hash based file detection. The following example searches "true" program stored as /bin/true in the guest operating system.
+
+    [root@localhost tests]# hadoop fs -rmr /results
+    [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashSearch ./sample_file/true /preservation-vm-1.md5 /results
+    ....
+      [ WAIT A FEW SECONDS ... ]
+
+Check the result of sector-hash based file deteciton.
+
+    [root@localhost tests]# hadoop fs -text /results/part-r-00000
+    18/03/24 00:06:21 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+    
+    1521814242,210287612,1572441,3584
+    1521814242,210291138,1572441,4096
+    1521814242,210291138,1572442,3584
+    1521814242,210294804,1572442,4096
+    1521814242,212248323,1572593,3584
+    1521814242,212448598,1572593,4096
+    1521814242,212448598,1572594,3584
+    1521814242,212452423,1572594,4096
+    1521814242,212452423,1572595,3584
+    1521814242,212455939,1572595,4096
+    1521814242,212455939,1572596,1952
+    1521814242,212463433,1572596,4096
+
+The above results means the pair of UNIX time in second, UNIX time in nanosecond, LBA, size of sector.
+
+
+### Search with sampling (2)
+
+Next, reduce the search time by using sampling technique. 
+Create the sampled HashDB.
+
+    [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5-0.05
+    [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.samplingIndex /preservation-vm-1.md5 /preservation-vm-1.md5-0.05 0.05
+    ....
+      [ WAIT A FEW SECONDS ... ]
+    ....
+	File Input Format Counters 
+		Bytes Read=112712198
+	File Output Format Counters 
+		Bytes Written=562199
+    7846:ms
+
+Seach a target file in the sampled HashDB.
+
+Check the result. If you are lucky, you can see the detected sector.
+
+    [root@localhost tests]# hadoop fs -text /results/part-r-0000018/03/24 00:30:29 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+    
+    1521814242,210287612,1572441,3584
+
+If you could not find any sectors, change the sampling rate (such as 0.1) and try again!
 
 
 ## Authors
 
-- Manabu Hirano - project manager
+- Manabu Hirano (hirano_at_toyota-ct.ac.jp) - project manager
 - Contributors: Hiromu Ogawa, Koki Yoshida, Natsuki Tsuzuki, Seishiro Ikeda
 
 ## License
