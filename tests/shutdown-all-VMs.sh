@@ -43,7 +43,7 @@ do
   completed[${j}]="0"
 done
 
-echo "Waiting for completion of benchmarks..."
+echo "Waiting for completion of virtual machines..."
 while [ ${REMAIN_VMS} != "0" ]
 do
    echo -n "."

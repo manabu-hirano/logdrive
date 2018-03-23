@@ -126,7 +126,7 @@ After rebooting your machine, execute the following scripts.
     [root@localhost setup]# source ~/.bash_profile
 
 
-## Installing guest OS for tests
+### Installing guest OS for tests
 
 First, you need to specify IP address of your computer as follows:
 
@@ -167,7 +167,9 @@ While the script is installing OS on VM, you can check the progress as follows:
 
 The LogDrive database of the installed virtual machine is /benchmark/preservation-vm-1.img.
 
-## Installing benchmark software on VMs
+### (Optional) Benchmarking VM's throughput
+
+You can skip this section.
 
 If you need to execute benchmark software on VMs, use the following instructions.
 
@@ -177,9 +179,7 @@ If you need to execute benchmark software on VMs, use the following instructions
     [root@localhost tests]# bash auto-setup-VMs.sh 2 1
       ## 2 for preservation, 1 for the number of VMs to be setup
 
-## Running the benchmark software on VMs
-
-First, you need to add a user "download" with password "test" as follows to gather the results of benchmark software on multiple VMs.
+Before running benchmark on virtual machines, you need to add a user "download" with password "test" as follows to gather the results of benchmark software on multiple VMs.
 
     [root@localhost tests]# useradd download
     [root@localhost tests]# passwd download 
@@ -189,9 +189,12 @@ First, you need to add a user "download" with password "test" as follows to gath
      BAD PASSWORD: is too simple
      Retype new password: [ ENTER "test" ]
 
+Then, execute benchmark script as follows.
+
     # Copy original logdrive file
     [root@localhost tests]# cp /benchmark/preservation-vm-1.img /benchmark/preservation-vm-1.img.orig
     [root@localhost tests]# bash auto-runtest-VMs.sh
+      [ THIS TAKES OVER TEN MINUTES ]
 
 You can check the results of benchmark software on VMs as CSV files in /benchmark/results/. If you need to execute further benchmark, see the detail of the auto-runtest-VMs.sh.
 
