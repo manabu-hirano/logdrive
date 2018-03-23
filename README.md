@@ -351,7 +351,7 @@ Then, compile the Hadoop MapReduce programs.
     /usr/local/hadoop-2.9.0/share/hadoop/common/hadoop-common-2.9.0.jar:/usr/local/hadoop-2.9.0/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.9.0.jar:./
     [root@localhost tests]# 
 
-When the compilation was success, you can found AnalysisSystem.jar in ./tests directory.
+If the compilation was success, you can find AnalysisSystem.jar in ./tests directory.
 
 ### Indexing
 
