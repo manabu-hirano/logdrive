@@ -1,6 +1,6 @@
 # LogDrive
 
-LogDrive is surveillance and forensic analysis tools for Xen-based IaaS cloud environments.
+LogDrive is a collection of proactive data collection, surveillance, and forensic analysis tools for Xen-based Infrastructure-as-a-Service (IaaS) cloud environments.
 
 ## Getting Started
 
@@ -283,6 +283,11 @@ Let's check the difference between the two restored disks.
     [root@localhost ]# 
 
 You will find the differences in .bash_history and in the newly created file "test.txt" at least.
+
+If you need to use conventional forensic tools to analyze them in file-system level, you can make disk image files by dd command.
+
+    [root@localhost ]# dd if=/dev/xen/blktap-2/tapdev0 of=1521826741.img conv=noerror,sync
+    [root@localhost ]# dd if=/dev/xen/blktap-2/tapdev1 of=1521826952.img conv=noerror,sync
 
 Finally, unmount the restored devices and to remove the LogDrive instance as follows. This step cannot be skipped.
 
