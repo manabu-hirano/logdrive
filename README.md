@@ -318,7 +318,7 @@ Finally, unmount the restored devices and to remove the LogDrive instance as fol
 
 ### Prerequisites: formatting HDFS and compiling MapReduce programs
 
-In the indexing and searching phases, we use Hadoop framework. This tutorial uses your computer as single Hadoop master/slave server in stand-alone mode. First you have to format Hadoop distributed file system (HDFS).
+In the indexing and search phases, we use Hadoop framework. This tutorial uses your computer as a single Hadoop master/slave server in stand-alone mode. First you have to format Hadoop distributed file system (HDFS).
 
     [root@localhost setup]# source ~/.bash_profile
     [root@localhost setup]# hdfs namenode -format
@@ -371,7 +371,7 @@ First, convert a LogDrive database file into SequenceFile in HDFS.
        [ WAIT A FEW MINUTES... ]
     [root@localhost tests]# 
 
-Check the output file (i.e., /preservation-vm-1.seq) via http://localhost:50070/explorer.html#/. Then, create HashDB from SequenceFile that is created in the above step.
+Check the output file (i.e., /preservation-vm-1.seq) via http://localhost:50070/explorer.html#/. Then, create HashDB from SequenceFile.
 
     [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashIndex /preservation-vm-1.seq /preservation-vm-1.md5
@@ -385,9 +385,9 @@ Check the output file (i.e., /preservation-vm-1.seq) via http://localhost:50070/
 		Bytes Written=112712198
     78193:ms
 
-Check the output HashDB directory (i.e., /preservation-vm-1.md5/) via http://localhost:50070/explorer.html#/.
+Check the output in HashDB directory (i.e., /preservation-vm-1.md5/) via http://localhost:50070/explorer.html#/.
 
-Use hadoop command with fs option to see the output. Each line consits of MD5 hash, UNIX time in second, UNIX time in nanosecond, LBA, and size of data.
+Use hadoop command with fs option to see the output. Each line consits of MD5 hash, UNIX time in second, UNIX time in nanosecond, Logical Block Address (LBA), and size of data.
  
     [root@localhost tests]# hadoop fs -text /preservation-vm-1.md5/part-r-00000
     ....
@@ -397,9 +397,9 @@ Use hadoop command with fs option to see the output. Each line consits of MD5 ha
 
 ### Search without sampling 
 
-A hashSearch class searches a file in a HashDB using sector-hash based file detection method.
+A hashSearch class searches a file in a HashDB using sector-hash-based file detection method.
 
-First, delete /results directory in HDFS. Then, run sector-hash based file detection class. The following example searches "true" program stored as /bin/true in the guest operating system.
+First, delete /results directory in HDFS. Then, run sector-hash-based file detection class. The following example searches "true" program stored as /bin/true in the guest operating system.
 
     [root@localhost tests]# hadoop fs -rmr /results
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashSearch ./sample_file/true /preservation-vm-1.md5 /results
@@ -424,11 +424,11 @@ Check the result.
     1521825179,348712537,518921,1952
     1521825179,348721085,518921,4096
 
-Each line consists of UNIX time in second, UNIX time in nanosecond, LBA, size of sector. Your results, especially UNIX time and LBA, may be different to the above results. These write logs have identical sectors of file "true".
+Each line consists of UNIX time in second, UNIX time in nanosecond, Logical Block Address (LBA), size of sector. Your results, especially UNIX time and LBA, may be different to the above results. These write logs include identical sectors of binary file "/bin/true".
 
-### Search with sampling 
+### Search with random sampling 
 
-This section describes how to reduce search time by using sampling technique. The following example creates a sampled HashDB with sampling rate of 0.5%.
+This section describes how to reduce search time by using random sampling technique. The following example creates a sampled HashDB with sampling rate of 0.5%.
 
     [root@localhost tests]# hadoop fs -rmr /preservation-vm-1.md5-0.05
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.samplingIndex /preservation-vm-1.md5 /preservation-vm-1.md5-0.05 0.05
@@ -441,7 +441,7 @@ This section describes how to reduce search time by using sampling technique. Th
 		Bytes Written=562199
     7846:ms
 
-Seach a target file in the sampled HashDB.
+Seach a target file in the new sampled HashDB.
 
     [root@localhost tests]# hadoop fs -rmr /results
     [root@localhost tests]# hadoop jar AnalysisSystem.jar jp.ac.toyota_ct.analysis_sys.hashSearch ./sample_file/true /preservation-vm-1.md5-0.05 /results
