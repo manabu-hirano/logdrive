@@ -6,7 +6,7 @@ LogDrive is proactive data collection, surveillance, and analysis software for c
 
 ### Requirement
 
-You need a temporary PC to test this software and tutorial. The LogDrive framework uses custom Linux kernel so that we cannot use Docker unfortunately. We tested this tutorial on a PC with 8 GB RAM and 128 GB SSD. Please note that we did not test this tutorial on a virtual machine such as an EC2 instance yet (i.e., a virtual machine runs on a virtual machine).
+You need a temporary PC to test this software and tutorial. The LogDrive framework uses custom Linux kernel so that we cannot use Docker unfortunately. We tested this tutorial on a PC with 8 GB RAM and 128 GB SSD. Please note that we did not test this tutorial on a virtual machine such as an EC2 instance yet (i.e., a virtual machine runs on a virtual machine). You also need Internet connection via DHCP.
 
 ### Prerequisites: host operating system 
 
@@ -71,7 +71,7 @@ Run setup scripts.
     ...
       [ THIS SCRIPT WILL TAKE LONGER THAN THE PREVIOUS SCRIPT ]
 
-After the kernel installation, you need to edit /etc/grub.conf and /etc/fstab, and reboot your computer. Please see the details in the end of the output of the 2-setup-kernel.sh.
+After the kernel installation, edit /etc/grub.conf and /etc/fstab, and reboot your computer. Please see the details in the end of the output of the 2-setup-kernel.sh.
 
     [root@localhost setup]# vi /etc/grub.conf
        [ INSERT THE FOLLOWING NEW ENTRY ]
@@ -88,7 +88,7 @@ After the kernel installation, you need to edit /etc/grub.conf and /etc/fstab, a
     
     [root@localhost setup]# reboot
 
-During rebooting process, you need to select "Xen (4.1.2) with Cent OS (2.6.32.57)" at grub menu. After rebooting your machine, run the following scripts.
+During rebooting process, select "Xen (4.1.2) with Cent OS (2.6.32.57)" at grub menu. After rebooting your machine, run the following scripts.
 
     [root@localhost setup]# bash 3-setup-network.sh
     ....
@@ -128,7 +128,7 @@ During rebooting process, you need to select "Xen (4.1.2) with Cent OS (2.6.32.5
 
 ### Installing guest OS for tests
 
-First, specify IP addresses of your computer and virtual machines as follows. In the following example, we assume that you have free IP address of 192.168.1.{151,152,...} for virtual machines in addition to your computer's IP address (i.e., 192.168.1.130). Please note that netmask has been fixed at 24 in the test scripts.
+First, specify IP addresses of your computer and virtual machines as follows. In the following example, we assume that you have free IP address of 192.168.1.{151,152,...} for virtual machines in addition to your computer's IP address (i.e., 192.168.1.130). Please note that netmask has been fixed at 24 and network address has fixed at 192.168.1 in the test scripts. If you need to change netmask and network address, edit the test scripts and configuration files.
 
     [root@localhost setup]# cd ../tests
     [root@localhost tests]# vi ipaddr_definition.sh
