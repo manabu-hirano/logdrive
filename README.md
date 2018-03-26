@@ -47,15 +47,16 @@ Run ./download/download.sh script to obtain the following software.
 - xen-4.1.2.tar.gz
 - CentOS-5.11-i386-bin-DVD-1of2.iso (Guest OS)
 
-Confirm the above software are in ./download directory.
+Confirm the above software were downloaded in ./download directory.
 
 ### Prerequisites: installing LogDrive and related software
 
-Run setup scripts as follows.
+Run setup scripts.
 
     [root@localhost logdrive]# cd ../setup
     [root@localhost setup]# bash 0-setup-bridge-utils.sh
-    
+    ...
+     
     [root@localhost setup]# bash 1-setup-xen-logdrive.sh
     ##
     ## This script 
@@ -74,12 +75,12 @@ After the kernel installation, you need to edit /etc/grub.conf and /etc/fstab, a
 
     [root@localhost setup]# vi /etc/grub.conf
        [ INSERT THE FOLLOWING NEW ENTRY ]
-       #hiddenmenu
-       title Xen (4.1.2) with CentOS (2.6.32.57)
-        root (hd0,0)
-        kernel /xen-4.1.2.gz
-        module /vmlinuz-2.6.32.57 ro root=/dev/mapper/VolGroup-lv_root rd_NO_LUKS LANG=en_US.UTF-8 rd_NO_MD rd_LVM_LV=VolGroup/lv_swap SYSFONT=latarcyrheb-sun16 rhgb crashkernel=auto  KEYBOARDTYPE=pc KEYTABLE=jp106 rd_LVM_LV=VolGroup/lv_root quiet rd_NO_DM
-        module /initramfs-2.6.32.57.img
+    #hiddenmenu
+    title Xen (4.1.2) with CentOS (2.6.32.57)
+    root (hd0,0)
+    kernel /xen-4.1.2.gz
+    module /vmlinuz-2.6.32.57 ro root=/dev/mapper/VolGroup-lv_root rd_NO_LUKS LANG=en_US.UTF-8 rd_NO_MD rd_LVM_LV=VolGroup/lv_swap SYSFONT=latarcyrheb-sun16 rhgb crashkernel=auto  KEYBOARDTYPE=pc KEYTABLE=jp106 rd_LVM_LV=VolGroup/lv_root quiet rd_NO_DM
+    module /initramfs-2.6.32.57.img
     
     [root@localhost setup]# vi /etc/fstab
        [ ADD THE FOLLOWING LINE BELOW THE LAST LINE ]
