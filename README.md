@@ -465,7 +465,7 @@ If you could not find any sectors, change the sampling rate (such as 0.1) and tr
 ## Authors
 
 - Manabu Hirano (hirano_at_toyota-ct.ac.jp) - project manager
-- Contributors: Hiromu Ogawa, Koki Yoshida, Natsuki Tsuzuki, Seishiro Ikeda
+- Contributors: Hiromu Ogawa, Hayate Takase, Koki Yoshida, Natsuki Tsuzuki, Seishiro Ikeda
 
 ## License
 
