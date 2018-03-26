@@ -1,6 +1,6 @@
 # LogDrive
 
-LogDrive is a collection of proactive data collection, surveillance, and forensic analysis tools for Xen-based Infrastructure-as-a-Service (IaaS) cloud environments.
+LogDrive is proactive data collection, surveillance, and analysis software for cloud forensics in Xen-based Infrastructure-as-a-Service (IaaS) cloud environments.
 
 ## Getting Started
 
@@ -316,7 +316,7 @@ Finally, unmount the restored devices and to remove the LogDrive instance as fol
 
 ### Prerequisites: formatting HDFS and compiling MapReduce programs
 
-In the indexing and searching phases, we use Hadoop framework. First you have to format Hadoop distributed file system (HDFS).
+In the indexing and searching phases, we use Hadoop framework. This tutorial uses your computer as single Hadoop master/slave server in stand-alone mode. First you have to format Hadoop distributed file system (HDFS).
 
     [root@localhost setup]# source ~/.bash_profile
     [root@localhost setup]# hdfs namenode -format
