@@ -128,7 +128,7 @@ During rebooting process, select "Xen (4.1.2) with Cent OS (2.6.32.57)" at grub 
 
 ### Installing guest OS for tests
 
-First, specify IP addresses of your computer and virtual machines as follows. In the following example, we assume that you have free IP address of 192.168.1.{151,152,...} for virtual machines in addition to your computer's IP address (i.e., 192.168.1.130). Please note that netmask has been fixed at 24 and network address has fixed at 192.168.1 in the test scripts. If you need to change netmask and network address, edit the test scripts and configuration files.
+First, specify IP addresses of your computer and virtual machines as follows. In the following example, we assume that you have free IP address of 192.168.1.{151,152,...} for virtual machines in addition to your computer's IP address (i.e., 192.168.1.130). Please note that netmask has been fixed at 24 and network address has been fixed at 192.168.1 in the test scripts. If you need to change netmask and network address, edit the test scripts and configuration files.
 
     [root@localhost setup]# cd ../tests
     [root@localhost tests]# vi ipaddr_definition.sh
@@ -156,7 +156,7 @@ Run make-VMs.sh to install CentOS5 on new virtual machine.
     y or n) [ ENTER y ]
     .... [ INSTALLATION OF GUEST OS ON VM TAKES A FEW MINUTES ] ...
 
-While the script is installing OS on VM, you can check the progress as follows:
+While the script is installing OSes on virtual machines, you can check the progress as follows:
 
     # To list virtual machines
     [root@localhost tests]# xl list
@@ -171,7 +171,7 @@ The LogDrive database of the installed virtual machine is /benchmark/preservatio
 
 You can skip this section.
 
-If you have to run benchmark software on VMs, follow the following instructions.
+If you have to run benchmark software on VMs, see the following instructions.
 
     [root@localhost tests]# rpm -ivh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
     [root@localhost tests]# yum -y install sshpass
@@ -196,7 +196,7 @@ Then, run benchmark script as follows.
     [root@localhost tests]# bash auto-runtest-VMs.sh
       [ THIS TAKES OVER TEN MINUTES ]
 
-Check the result in /benchmark/results/*.csv. If you need further complex benchmark, edit auto-runtest-VMs.sh.
+Check the result in /benchmark/results/1/1/{*.csv, *.html}. If you need further complex benchmark, edit auto-runtest-VMs.sh.
 
 ### Preservation mode on virtual machines
 
@@ -207,7 +207,7 @@ First, check the current UNIX time to restore the LogDrive after this test.
     [root@localhost tests]# date +%s
     1521826741
 
-The above UNIX time is needed to restore the previous state of the LogDrive database.
+The above UNIX time is necessary to restore the previous state of the LogDrive database.
 
     [root@localhost tests]# xl create -c /benchmark/preservation-vm-1.postinstall.xl.cfg
     ...
@@ -215,13 +215,14 @@ The above UNIX time is needed to restore the previous state of the LogDrive data
     Password: [ ENTER "test" ]
     [root@preservation-vm-1 ~]# echo "THIS IS TEST" > /root/test.txt 
 
-The operations that are executed on the virtual machine are recorded in a LogDrive database (i.e., /benchmark/preservation-vm-1.img). Finally, shutdown the virtual machine.
+The write operations that are executed on the virtual machine are recorded in a LogDrive database (i.e., /benchmark/preservation-vm-1.img). Finally, shutdown the virtual machine.
+
 
     [root@preservation-vm-1 ~]# shutdown -h now
     ....
     System halted.
 
-After shutting down the virtual machine, remove the blktap instance. This important process flushes the indexes of the LogDrive database.
+After shutting down the virtual machine, remove the blktap instance. This important process flushes the index of the LogDrive database.
 
     [root@localhost logdrive]# tap-ctl list
     25076  0    0 preservation /benchmark/preservation-vm-1.img
@@ -250,7 +251,7 @@ In this tutorial, we restore two previous virtual disks to compare the differenc
     [root@localhost tests]#  tap-ctl create -a timetravel:/benchmark/preservation-vm-1.img:1521826741
     /dev/xen/blktap-2/tapdev0  <= CHECK THIS NAME
     [root@localhost tests]#  tap-ctl create -a timetravel:/benchmark/preservation-vm-1.img:1521826952
-    /dev/xen/blktap-2/tapdev1 <= CHECK  THIS NAME
+    /dev/xen/blktap-2/tapdev1 <= CHECK THIS NAME
 
 Now, we have two virtual block devices named tapdev0 and tapdev1. These two devices are created by LogDrive framework. Let's check the internal state of the virtual device.
 
@@ -267,7 +268,7 @@ Now, we have two virtual block devices named tapdev0 and tapdev1. These two devi
     /dev/xen/blktap-2/tapdev0p1   *          63    18908504     9454221   83  Linux
     /dev/xen/blktap-2/tapdev0p2        18908505    20948759     1020127+  82  Linux swap / Solaris
 
-The two restored virtual block devices have the identical partition table, so we can mount them in the same way except for a mount point. Mount root partition of the different UNIX time in read only mode as follows:
+The two restored virtual block devices have the identical partition table, so we can mount them in the same way except for a device name and a mount point. Mount root partition of the different UNIX time in read only mode as follows:
 
     [root@localhost ]# mount -t ext3 -o ro,offset=`expr 63 \* 512` /dev/xen/blktap-2/tapdev0 /mnt/timetravel-1 
     [root@localhost ]# mount -t ext3 -o ro,offset=`expr 63 \* 512` /dev/xen/blktap-2/tapdev1 /mnt/timetravel-2
@@ -304,9 +305,9 @@ Finally, unmount the restored devices and to remove the LogDrive instance as fol
                        9158060  2691240   5994112  31% /mnt/timetravel-2
    
     ## executes "bash ./umount.sh tap_name mout_point" as follows:
-    [root@localhost tests]# bash ./umount.sh /benchmark/preservation-vm-1.img:1521826741  /mnt/timetravel-1
+    [root@localhost tests]# bash ./umount.sh /benchmark/preservation-vm-1.img  /mnt/timetravel-1
     Destroying tap device process 6368, minor 0 ...
-    [root@localhost tests]# bash ./umount.sh /benchmark/preservation-vm-1.img:1521826952  /mnt/timetravel-2
+    [root@localhost tests]# bash ./umount.sh /benchmark/preservation-vm-1.img  /mnt/timetravel-2
     Destroying tap device process 6382, minor 1 ...
     
     [root@localhost tests]# tap-ctl list
